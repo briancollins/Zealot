@@ -176,7 +176,7 @@ ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *type_ref) {
             if (ret != ZE_SUCCESS) goto error;
             ret = ze_stream_next_var_int(stream, &long_len);
             if (ret != ZE_SUCCESS) goto error;
-            *type_ref = CFArrayCreateMutable(NULL, long_len, NULL);
+            *type_ref = CFArrayCreateMutable(NULL, long_len, &kCFTypeArrayCallBacks);
             if (*type_ref == NULL) {
                 ret = ZE_ERROR_CREATE;
                 goto error;
@@ -193,7 +193,7 @@ ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *type_ref) {
         case 0x05:
             ret = ze_stream_next_var_int(stream, &long_len);
             if (ret != ZE_SUCCESS) goto error;
-            *type_ref = CFDictionaryCreateMutable(NULL, long_len, NULL, NULL);
+            *type_ref = CFDictionaryCreateMutable(NULL, long_len, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
             if (*type_ref == NULL) {
                 ret = ZE_ERROR_CREATE;
                 goto error;

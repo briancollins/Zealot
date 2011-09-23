@@ -24,5 +24,6 @@ typedef struct {
 
 
 ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, char *path);
+void ze_mpq_close(ZE_MPQ *mpq);
 
 #endif

@@ -5,6 +5,7 @@
 
 ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, char *path) {
     ZE_RETVAL ret = ZE_SUCCESS;
+    ZE_STREAM *user_data = NULL;
     
     *mpq = NULL;
     ZE_MPQ *m = malloc(sizeof(ZE_MPQ));
@@ -29,7 +30,7 @@ ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, char *path) {
         goto error;
     }
     
-    ZE_STREAM *user_data;
+
     ret = ze_stream_next_stream(m->stream, &user_data, m->header.user_data_length);
     if (ret != ZE_SUCCESS) {
         goto error;
@@ -39,13 +40,22 @@ ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, char *path) {
     if (ret != ZE_SUCCESS) {
         goto error;
     }
-    
     ze_stream_close(user_data);
     
     return ZE_SUCCESS;
     
 error:
     ze_stream_close(m->stream);
+    ze_stream_close(user_data);
     free(m);
     return ret;
+}
+
+void ze_mpq_close(ZE_MPQ *mpq) {
+    ze_stream_close(mpq->stream);
+    if (mpq->replay_info) {
+        CFRelease(mpq->replay_info), mpq->replay_info = NULL;
+    }
+    
+    free(mpq);
 }

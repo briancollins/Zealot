@@ -6,7 +6,10 @@
 - (id)initWithPath:(NSString *)path account:(NSString *)account {
     if ((self = [super init])) {
         ZE_MPQ *mpq;
-        ze_mpq_new(&mpq, (char *)[path UTF8String]);
+        
+        if (ze_mpq_new(&mpq, (char *)[path UTF8String]) == ZE_SUCCESS) {
+            NSLog(@"%@", [(NSDictionary *)mpq->replay_info allValues]);
+        }
         // Initialization code here.
     }
     

@@ -292,3 +292,12 @@ error:
     ze_stream_close(*s);
     return ret;
 }
+
+ZE_RETVAL ze_stream_seek(ZE_STREAM *stream, off_t offset) {
+    if (offset > stream->len) {
+        return ZE_ERROR_UNEXPECTED_EOF;
+    }
+    
+    stream->cursor = offset;
+    return ZE_SUCCESS;
+}

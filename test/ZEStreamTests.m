@@ -3,21 +3,6 @@
 
 @implementation ZEStreamTests
 
-- (void)setUp
-{
-    [super setUp];
-    
-    // Set-up code here.
-}
-
-- (void)tearDown
-{
-    // Tear-down code here.
-    
-    [super tearDown];
-}
-
-
 - (void)testStreamNew {
     ZE_STREAM *s;
     uint8_t bytes[] = {'t', 'e', 's', 't'};

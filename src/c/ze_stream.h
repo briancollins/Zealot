@@ -42,5 +42,6 @@ ZE_RETVAL ze_stream_next_string(ZE_STREAM *stream, CFStringRef *str, size_t len)
 ZE_RETVAL ze_stream_next_var_int(ZE_STREAM *stream, int64_t *var_int);
 ZE_RETVAL ze_stream_next_stream(ZE_STREAM *stream, ZE_STREAM **s, size_t len);
 ZE_RETVAL ze_stream_next_ptr(ZE_STREAM *stream, uint8_t **p, size_t len);
+ZE_RETVAL ze_stream_seek(ZE_STREAM *stream, off_t offset);
 
 #endif

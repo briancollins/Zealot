@@ -23,7 +23,10 @@ typedef struct {
 } ZE_MPQ;
 
 
-ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, char *path);
+ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, ZE_STREAM *stream);
+ZE_RETVAL ze_mpq_new_file(ZE_MPQ **mpq, char *path);
+ZE_RETVAL ze_mpq_read_header(ZE_MPQ *mpq);
+ZE_RETVAL ze_mpq_read_user_data(ZE_MPQ *mpq);
 void ze_mpq_close(ZE_MPQ *mpq);
 
 #endif

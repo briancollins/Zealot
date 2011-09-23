@@ -1,0 +1,355 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3B7A3050142C776100442794 /* libbz2.1.0.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7A304F142C776100442794 /* libbz2.1.0.5.dylib */; };
+		3B7A3052142C786600442794 /* ze_mpq.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B7A3051142C786600442794 /* ze_mpq.c */; };
+		3B8436CB142A8B1500B22E7B /* ZEReplay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8436CA142A8B1500B22E7B /* ZEReplay.m */; };
+		3B8436D0142A8BBC00B22E7B /* ze_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B8436CF142A8BBC00B22E7B /* ze_stream.c */; };
+		3BFCF312142803790048215F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BFCF311142803790048215F /* Cocoa.framework */; };
+		3BFCF33F142804160048215F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BFCF336142804160048215F /* MainMenu.xib */; };
+		3BFCF340142804160048215F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BFCF339142804160048215F /* main.m */; };
+		3BFCF341142804160048215F /* ZEAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BFCF33C142804160048215F /* ZEAppDelegate.m */; };
+		3BFCF343142804B10048215F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BFCF342142804B10048215F /* CoreData.framework */; };
+		3BFCF346142804FC0048215F /* db.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3BFCF344142804FC0048215F /* db.xcdatamodeld */; };
+		3BFCF34A1428057A0048215F /* ZEReplayManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BFCF3491428057A0048215F /* ZEReplayManager.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		3B7A304D142C76FA00442794 /* ze_encryption_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ze_encryption_table.h; sourceTree = "<group>"; };
+		3B7A304F142C776100442794 /* libbz2.1.0.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.1.0.5.dylib; path = usr/lib/libbz2.1.0.5.dylib; sourceTree = SDKROOT; };
+		3B7A3051142C786600442794 /* ze_mpq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ze_mpq.c; sourceTree = "<group>"; };
+		3B7A3053142C787600442794 /* ze_mpq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ze_mpq.h; sourceTree = "<group>"; };
+		3B8436C9142A8B1500B22E7B /* ZEReplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZEReplay.h; sourceTree = "<group>"; };
+		3B8436CA142A8B1500B22E7B /* ZEReplay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZEReplay.m; sourceTree = "<group>"; };
+		3B8436CF142A8BBC00B22E7B /* ze_stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ze_stream.c; sourceTree = "<group>"; };
+		3B8436D1142A8BC800B22E7B /* ze_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ze_stream.h; sourceTree = "<group>"; };
+		3BFCF30D142803790048215F /* Zealot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zealot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BFCF311142803790048215F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		3BFCF314142803790048215F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		3BFCF315142803790048215F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		3BFCF316142803790048215F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		3BFCF334142804160048215F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3BFCF336142804160048215F /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		3BFCF339142804160048215F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		3BFCF33A142804160048215F /* prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = prefix.pch; sourceTree = "<group>"; };
+		3BFCF33B142804160048215F /* ZEAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZEAppDelegate.h; sourceTree = "<group>"; };
+		3BFCF33C142804160048215F /* ZEAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZEAppDelegate.m; sourceTree = "<group>"; };
+		3BFCF342142804B10048215F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		3BFCF345142804FC0048215F /* db.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = db.xcdatamodel; sourceTree = "<group>"; };
+		3BFCF3481428057A0048215F /* ZEReplayManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZEReplayManager.h; sourceTree = "<group>"; };
+		3BFCF3491428057A0048215F /* ZEReplayManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZEReplayManager.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3BFCF30A142803780048215F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B7A3050142C776100442794 /* libbz2.1.0.5.dylib in Frameworks */,
+				3BFCF343142804B10048215F /* CoreData.framework in Frameworks */,
+				3BFCF312142803790048215F /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3B8436C7142A8B0D00B22E7B /* models */ = {
+			isa = PBXGroup;
+			children = (
+				3B8436C9142A8B1500B22E7B /* ZEReplay.h */,
+				3B8436CA142A8B1500B22E7B /* ZEReplay.m */,
+			);
+			path = models;
+			sourceTree = "<group>";
+		};
+		3B8436CE142A8BA800B22E7B /* c */ = {
+			isa = PBXGroup;
+			children = (
+				3B8436CF142A8BBC00B22E7B /* ze_stream.c */,
+				3B8436D1142A8BC800B22E7B /* ze_stream.h */,
+				3B7A304D142C76FA00442794 /* ze_encryption_table.h */,
+				3B7A3051142C786600442794 /* ze_mpq.c */,
+				3B7A3053142C787600442794 /* ze_mpq.h */,
+			);
+			path = c;
+			sourceTree = "<group>";
+		};
+		3BFCF302142803780048215F = {
+			isa = PBXGroup;
+			children = (
+				3BFCF337142804160048215F /* src */,
+				3BFCF331142804160048215F /* db */,
+				3BFCF333142804160048215F /* plist */,
+				3BFCF335142804160048215F /* res */,
+				3BFCF310142803790048215F /* Frameworks */,
+				3BFCF30E142803790048215F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3BFCF30E142803790048215F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3BFCF30D142803790048215F /* Zealot.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3BFCF310142803790048215F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3B7A304F142C776100442794 /* libbz2.1.0.5.dylib */,
+				3BFCF342142804B10048215F /* CoreData.framework */,
+				3BFCF311142803790048215F /* Cocoa.framework */,
+				3BFCF313142803790048215F /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3BFCF313142803790048215F /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3BFCF314142803790048215F /* AppKit.framework */,
+				3BFCF315142803790048215F /* CoreData.framework */,
+				3BFCF316142803790048215F /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		3BFCF331142804160048215F /* db */ = {
+			isa = PBXGroup;
+			children = (
+				3BFCF344142804FC0048215F /* db.xcdatamodeld */,
+			);
+			path = db;
+			sourceTree = "<group>";
+		};
+		3BFCF333142804160048215F /* plist */ = {
+			isa = PBXGroup;
+			children = (
+				3BFCF334142804160048215F /* Info.plist */,
+			);
+			path = plist;
+			sourceTree = "<group>";
+		};
+		3BFCF335142804160048215F /* res */ = {
+			isa = PBXGroup;
+			children = (
+				3BFCF336142804160048215F /* MainMenu.xib */,
+			);
+			path = res;
+			sourceTree = "<group>";
+		};
+		3BFCF337142804160048215F /* src */ = {
+			isa = PBXGroup;
+			children = (
+				3B8436CE142A8BA800B22E7B /* c */,
+				3B8436C7142A8B0D00B22E7B /* models */,
+				3BFCF347142805700048215F /* helpers */,
+				3BFCF338142804160048215F /* base */,
+				3BFCF33B142804160048215F /* ZEAppDelegate.h */,
+				3BFCF33C142804160048215F /* ZEAppDelegate.m */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		3BFCF338142804160048215F /* base */ = {
+			isa = PBXGroup;
+			children = (
+				3BFCF339142804160048215F /* main.m */,
+				3BFCF33A142804160048215F /* prefix.pch */,
+			);
+			path = base;
+			sourceTree = "<group>";
+		};
+		3BFCF347142805700048215F /* helpers */ = {
+			isa = PBXGroup;
+			children = (
+				3BFCF3481428057A0048215F /* ZEReplayManager.h */,
+				3BFCF3491428057A0048215F /* ZEReplayManager.m */,
+			);
+			path = helpers;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3BFCF30C142803780048215F /* Zealot */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3BFCF32E142803790048215F /* Build configuration list for PBXNativeTarget "Zealot" */;
+			buildPhases = (
+				3BFCF309142803780048215F /* Sources */,
+				3BFCF30A142803780048215F /* Frameworks */,
+				3BFCF30B142803780048215F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Zealot;
+			productName = Zealot;
+			productReference = 3BFCF30D142803790048215F /* Zealot.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3BFCF304142803780048215F /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 3BFCF307142803780048215F /* Build configuration list for PBXProject "Zealot" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3BFCF302142803780048215F;
+			productRefGroup = 3BFCF30E142803790048215F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3BFCF30C142803780048215F /* Zealot */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3BFCF30B142803780048215F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3BFCF33F142804160048215F /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3BFCF309142803780048215F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3BFCF340142804160048215F /* main.m in Sources */,
+				3BFCF341142804160048215F /* ZEAppDelegate.m in Sources */,
+				3BFCF346142804FC0048215F /* db.xcdatamodeld in Sources */,
+				3BFCF34A1428057A0048215F /* ZEReplayManager.m in Sources */,
+				3B8436CB142A8B1500B22E7B /* ZEReplay.m in Sources */,
+				3B8436D0142A8BBC00B22E7B /* ze_stream.c in Sources */,
+				3B7A3052142C786600442794 /* ze_mpq.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3BFCF32C142803790048215F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3BFCF32D142803790048215F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3BFCF32F142803790048215F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = src/base/prefix.pch;
+				INFOPLIST_FILE = plist/Info.plist;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		3BFCF330142803790048215F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = src/base/prefix.pch;
+				INFOPLIST_FILE = plist/Info.plist;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3BFCF307142803780048215F /* Build configuration list for PBXProject "Zealot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3BFCF32C142803790048215F /* Debug */,
+				3BFCF32D142803790048215F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3BFCF32E142803790048215F /* Build configuration list for PBXNativeTarget "Zealot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3BFCF32F142803790048215F /* Debug */,
+				3BFCF330142803790048215F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		3BFCF344142804FC0048215F /* db.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				3BFCF345142804FC0048215F /* db.xcdatamodel */,
+			);
+			currentVersion = 3BFCF345142804FC0048215F /* db.xcdatamodel */;
+			path = db.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 3BFCF304142803780048215F /* Project object */;
+}

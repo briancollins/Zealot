@@ -9,6 +9,7 @@
         
         if (ze_mpq_new(&mpq, (char *)[path UTF8String]) == ZE_SUCCESS) {
             NSLog(@"%@", [(NSDictionary *)mpq->replay_info allValues]);
+            ze_mpq_close(mpq);
         }
         // Initialization code here.
     }

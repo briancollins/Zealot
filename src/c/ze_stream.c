@@ -107,13 +107,24 @@ ZE_RETVAL ze_stream_next_n(ZE_STREAM *stream, uint8_t *buf, size_t len) {
     return ZE_SUCCESS;
 }
 
-ZE_RETVAL ze_stream_next_string(ZE_STREAM *stream, CFStringRef *str, size_t len) {
+ZE_RETVAL ze_stream_next_ptr(ZE_STREAM *stream, uint8_t **ptr, size_t len) {
+    uint8_t *p = stream->bytes + stream->cursor;
     ZE_RETVAL ret = ze_stream_skip(stream, len);
+    if (ret == ZE_SUCCESS) {
+        *ptr = p;
+    }
+    
+    return ret;
+}
+
+ZE_RETVAL ze_stream_next_string(ZE_STREAM *stream, CFStringRef *str, size_t len) {
+    uint8_t *ptr = NULL;
+    ZE_RETVAL ret = ze_stream_next_ptr(stream, &ptr, len);
     if (ret != ZE_SUCCESS) {
         return ret;
     }
     
-    *str = CFStringCreateWithBytes(NULL, stream->bytes + (stream->cursor - len), len, kCFStringEncodingUTF8, false);
+    *str = CFStringCreateWithBytes(NULL, ptr, len, kCFStringEncodingUTF8, false);
     if (*str == NULL) {
         return ZE_ERROR_CREATE;
     }
@@ -266,11 +277,11 @@ ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *type_ref) {
 
 ZE_RETVAL ze_stream_next_stream(ZE_STREAM *stream, ZE_STREAM **s, size_t len) {
     ZE_RETVAL ret;
-    *s = NULL;
-    ret = ze_stream_skip(stream, len);
+    uint8_t *ptr;
+    ret = ze_stream_next_ptr(stream, &ptr, len);
     if (ret != ZE_SUCCESS) goto error;
     
-    ret = ze_stream_new(s, stream->bytes + (stream->cursor - len), len, ZE_STREAM_TYPE_NONE);
+    ret = ze_stream_new(s, ptr, len, ZE_STREAM_TYPE_NONE);
     if (ret != ZE_SUCCESS) goto error;
     
     return ZE_SUCCESS;

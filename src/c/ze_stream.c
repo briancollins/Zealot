@@ -119,6 +119,7 @@ ZE_RETVAL ze_stream_next_ptr(ZE_STREAM *stream, uint8_t **ptr, size_t len) {
 
 ZE_RETVAL ze_stream_next_string(ZE_STREAM *stream, CFStringRef *str, size_t len) {
     uint8_t *ptr = NULL;
+    *str = NULL;
     ZE_RETVAL ret = ze_stream_next_ptr(stream, &ptr, len);
     if (ret != ZE_SUCCESS) {
         return ret;
@@ -232,6 +233,7 @@ ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *type_ref) {
             break;
         case 0x06:
             ret = ze_stream_next(stream, &byte);
+            byte >>= 1;
             int x = byte;
             if (ret != ZE_SUCCESS) goto error;
             *type_ref = CFNumberCreate(NULL, kCFNumberIntType, &x);
@@ -243,8 +245,9 @@ ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *type_ref) {
         case 0x07:
             ret = ze_stream_next_n(stream, (uint8_t *)&dword, sizeof(dword));
             if (ret != ZE_SUCCESS) goto error;
+            uint64_t ull = dword;
             
-            *type_ref = CFNumberCreate(NULL, kCFNumberIntType, &dword);
+            *type_ref = CFNumberCreate(NULL, kCFNumberLongLongType, &ull);
             if (*type_ref == NULL) {
                 ret = ZE_ERROR_CREATE;
                 goto error;

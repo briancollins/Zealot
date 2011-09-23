@@ -15,6 +15,7 @@
 		3B7A3075142CB0ED00442794 /* libbz2.1.0.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B7A304F142C776100442794 /* libbz2.1.0.5.dylib */; };
 		3B7A3076142CB0FD00442794 /* ze_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B8436CF142A8BBC00B22E7B /* ze_stream.c */; };
 		3B7A3077142CB0FD00442794 /* ze_mpq.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B7A3051142C786600442794 /* ze_mpq.c */; };
+		3B7A307F142CCC1300442794 /* ZEMPQTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B7A307E142CCC1300442794 /* ZEMPQTests.m */; };
 		3B8436CB142A8B1500B22E7B /* ZEReplay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8436CA142A8B1500B22E7B /* ZEReplay.m */; };
 		3B8436D0142A8BBC00B22E7B /* ze_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B8436CF142A8BBC00B22E7B /* ze_stream.c */; };
 		3BFCF312142803790048215F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BFCF311142803790048215F /* Cocoa.framework */; };
@@ -37,6 +38,8 @@
 		3B7A3071142CAFFF00442794 /* ZEStreamTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZEStreamTests.m; sourceTree = "<group>"; };
 		3B7A3079142CB19200442794 /* prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = prefix.pch; sourceTree = "<group>"; };
 		3B7A307B142CB21600442794 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3B7A307D142CCC1300442794 /* ZEMPQTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZEMPQTests.h; sourceTree = "<group>"; };
+		3B7A307E142CCC1300442794 /* ZEMPQTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZEMPQTests.m; sourceTree = "<group>"; };
 		3B8436C9142A8B1500B22E7B /* ZEReplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZEReplay.h; sourceTree = "<group>"; };
 		3B8436CA142A8B1500B22E7B /* ZEReplay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZEReplay.m; sourceTree = "<group>"; };
 		3B8436CF142A8BBC00B22E7B /* ze_stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ze_stream.c; sourceTree = "<group>"; };
@@ -89,6 +92,8 @@
 				3B7A3078142CB19200442794 /* base */,
 				3B7A3070142CAFFF00442794 /* ZEStreamTests.h */,
 				3B7A3071142CAFFF00442794 /* ZEStreamTests.m */,
+				3B7A307D142CCC1300442794 /* ZEMPQTests.h */,
+				3B7A307E142CCC1300442794 /* ZEMPQTests.m */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -332,6 +337,7 @@
 				3B7A3072142CAFFF00442794 /* ZEStreamTests.m in Sources */,
 				3B7A3076142CB0FD00442794 /* ze_stream.c in Sources */,
 				3B7A3077142CB0FD00442794 /* ze_mpq.c in Sources */,
+				3B7A307F142CCC1300442794 /* ZEMPQTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -184,7 +184,7 @@ ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *type_ref) {
             ret = ze_stream_next(stream, &len);
             if (ret != ZE_SUCCESS) goto error;
             len >>= 1;
-            ret = ze_stream_next_string(stream, (CFStringRef *)type_ref, len);
+            ret = ze_stream_next_string(stream, type_ref, len);
             if (ret != ZE_SUCCESS) goto error;
             break;
             

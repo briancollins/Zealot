@@ -29,14 +29,13 @@ error:
     return ret;
 }
 
-/* TODO: return stream instead, so then we don't have to malloc twice (or at all if uncompressed) */
-ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, uint8_t **bytes, off_t *len) {
+ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s) {
     uint8_t ret;
     uint32_t hash_a, hash_b;
     uint8_t *data = NULL;
     uint8_t *uncompressed = NULL;
-    *bytes = NULL;
-    
+    *s = NULL;
+
     ret = ze_mpq_hash((uint8_t *)filename, strlen(filename), ZE_MPQ_HASH_TYPE_HASH_A, &hash_a);
     if (ret != ZE_SUCCESS) goto error;
     
@@ -72,14 +71,8 @@ ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, uint8_t **bytes, off_t *
     ret = ze_stream_seek(mpq->stream, mpq->header->archive_header_offset + block->block_offset);
     if (ret != ZE_SUCCESS) goto error;
     
-    if (block->flags & ZE_BLOCK_SINGLE) {
-        data = malloc(block->archived_size);
-        if (data == NULL) {
-            ret = ZE_ERROR_MALLOC;
-            goto error;
-        }
-        
-        ret = ze_stream_next_n(mpq->stream, data, block->archived_size);
+    if (block->flags & ZE_BLOCK_SINGLE) {        
+        ret = ze_stream_next_ptr(mpq->stream, &data, block->archived_size);
         if (ret != ZE_SUCCESS) goto error;
 
         if ((block->flags & ZE_BLOCK_COMPRESSED) && data[0] == 16) {
@@ -96,21 +89,23 @@ ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, uint8_t **bytes, off_t *
                 ret = ZE_ERROR_BZIP;
                 goto error;
             }
-            free(data);
-            *bytes = uncompressed;
-            *len = dest_len;
+            ret = ze_stream_new(s, uncompressed, dest_len, ZE_STREAM_TYPE_FREE);
+            if (ret != ZE_SUCCESS) goto error;
         } else {
-            *bytes = data;
-            *len = block->archived_size;
+            ret = ze_stream_new(s, data, block->archived_size, ZE_STREAM_TYPE_NONE);
+            if (ret != ZE_SUCCESS) goto error;
         }
     }
     
     return ZE_SUCCESS;
     
 error:
-    free(data);
     free(uncompressed);
-    *bytes = NULL;
+    if (*s != NULL) {
+        ze_stream_close(*s);    
+        *s = NULL;
+    }
+    
     return ret;
 }
 

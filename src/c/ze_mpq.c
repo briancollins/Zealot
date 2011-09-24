@@ -29,12 +29,12 @@ ZE_RETVAL ze_mpq_read_header(ZE_MPQ *mpq) {
         goto error;
     }
     
-    ret = ze_stream_next_n(mpq->stream, (uint8_t *)&mpq->header, sizeof(ZE_MPQ_HEADER));
+    ret = ze_stream_next_ptr(mpq->stream, (uint8_t **)&mpq->header, sizeof(ZE_MPQ_HEADER));
     if (ret != ZE_SUCCESS) {
         goto error;
     }
     
-    if (memcmp(ZE_MPQ_MAGIC, mpq->header.magic, 4) != 0) {
+    if (memcmp(ZE_MPQ_MAGIC, mpq->header->magic, 4) != 0) {
         ret = ZE_ERROR_FORMAT;
         goto error;
     }
@@ -53,7 +53,7 @@ ZE_RETVAL ze_mpq_read_user_data(ZE_MPQ *mpq) {
         goto error;
     }
     
-    ret = ze_stream_next_stream(mpq->stream, &user_data, mpq->header.user_data_length);    
+    ret = ze_stream_next_stream(mpq->stream, &user_data, mpq->header->user_data_length);    
     if (ret != ZE_SUCCESS) {
         goto error;
     }

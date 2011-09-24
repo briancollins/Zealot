@@ -18,7 +18,7 @@ typedef struct {
 typedef struct {
     ZE_STREAM *stream;
     char **filenames;
-    ZE_MPQ_HEADER header;
+    ZE_MPQ_HEADER *header;
     CFDictionaryRef replay_info;
 } ZE_MPQ;
 

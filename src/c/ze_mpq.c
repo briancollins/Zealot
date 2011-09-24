@@ -29,6 +29,7 @@ error:
     return ret;
 }
 
+/* TODO: return stream instead, so then we don't have to malloc twice (or at all if uncompressed) */
 ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, uint8_t **bytes, off_t *len) {
     uint8_t ret;
     uint32_t hash_a, hash_b;

@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <bzlib.h>
 #include "ze_mpq.h"
+#include "ze_encryption_table.h"
 
 ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, ZE_STREAM *stream) {
     ZE_RETVAL ret = ZE_SUCCESS;
@@ -14,11 +16,187 @@ ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, ZE_STREAM *stream) {
     }
     m->stream = stream;
     m->replay_info = NULL;
+    m->header = NULL;
+    m->archive_header = NULL;
+    
+    m->hash_table = NULL;
+    m->block_table = NULL;
     
     *mpq = m;
     return ZE_SUCCESS;
 error:
     free(m);
+    return ret;
+}
+
+ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, uint8_t **bytes, off_t *len) {
+    uint8_t ret;
+    uint32_t hash_a, hash_b;
+    uint8_t *data = NULL;
+    uint8_t *uncompressed = NULL;
+    *bytes = NULL;
+    
+    ret = ze_mpq_hash((uint8_t *)filename, strlen(filename), ZE_MPQ_HASH_TYPE_HASH_A, &hash_a);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    ret = ze_mpq_hash((uint8_t *)filename, strlen(filename), ZE_MPQ_HASH_TYPE_HASH_B, &hash_b);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    uint32_t i;
+    ZE_MPQ_HASH_TABLE_ENTRY *entry = NULL;
+    for (i = 0; i < mpq->archive_header->hash_table_entries; i++) {
+        if (mpq->hash_table[i].hash_a == hash_a &&
+            mpq->hash_table[i].hash_b == hash_b) {
+            entry = &mpq->hash_table[i];
+            break;
+        }
+    }
+    
+    if (entry == NULL) {
+        ret = ZE_ERROR_FILE_NOT_FOUND;
+        goto error;
+    }
+    
+    ZE_MPQ_BLOCK_TABLE_ENTRY *block = &(mpq->block_table[entry->block_index]);
+    if (!(block->flags & ZE_BLOCK_FILE)) {
+        ret = ZE_ERROR_FILE_NOT_FOUND;
+        goto error;
+    }
+    
+    if (block->flags & ZE_BLOCK_ENCRYPTED) {
+        ret = ZE_ERROR_ENCRYPTED;
+        goto error;
+    }
+    
+    ret = ze_stream_seek(mpq->stream, mpq->header->archive_header_offset + block->block_offset);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    if (block->flags & ZE_BLOCK_SINGLE) {
+        data = malloc(block->archived_size);
+        if (data == NULL) {
+            ret = ZE_ERROR_MALLOC;
+            goto error;
+        }
+        
+        ret = ze_stream_next_n(mpq->stream, data, block->archived_size);
+        if (ret != ZE_SUCCESS) goto error;
+
+        if ((block->flags & ZE_BLOCK_COMPRESSED) && data[0] == 16) {
+            uint32_t dest_len = block->file_size;
+            uncompressed = malloc(dest_len);
+            if (uncompressed == NULL) {
+                ret = ZE_ERROR_MALLOC;
+                goto error;
+            }
+            
+            int err = BZ2_bzBuffToBuffDecompress((char *)uncompressed, &dest_len, (char *)data + 1, block->archived_size - 1, 0, 0);
+            
+            if (err != BZ_OK) {
+                ret = ZE_ERROR_BZIP;
+                goto error;
+            }
+            free(data);
+            *bytes = uncompressed;
+            *len = dest_len;
+        } else {
+            *bytes = data;
+            *len = block->archived_size;
+        }
+    }
+    
+    return ZE_SUCCESS;
+    
+error:
+    free(data);
+    free(uncompressed);
+    *bytes = NULL;
+    return ret;
+}
+
+ZE_RETVAL ze_mpq_read_tables(ZE_MPQ *mpq) {
+    ZE_RETVAL ret;
+    
+    if (mpq->archive_header == NULL) {
+        ret = ZE_ERROR_LOAD_ORDER;
+        goto error;
+    }
+    
+    ret = ze_mpq_read_table(mpq, mpq->header->archive_header_offset + mpq->archive_header->hash_table_offset, mpq->archive_header->hash_table_entries, (uint8_t **)&mpq->hash_table, "(hash table)");
+    
+    if (ret != ZE_SUCCESS) goto error;
+    
+    ret = ze_mpq_read_table(mpq, mpq->header->archive_header_offset + mpq->archive_header->block_table_offset, mpq->archive_header->block_table_entries, (uint8_t **)&mpq->block_table, "(block table)");
+    
+    if (ret != ZE_SUCCESS) goto error;
+
+    
+    return ZE_SUCCESS;
+error:
+    return ret;
+}
+
+ZE_RETVAL ze_mpq_hash(uint8_t *str, size_t len, ZE_MPQ_HASH_TYPE hash_type, uint32_t *hash) {
+    size_t i;
+    
+    uint32_t seed1 = 0x7FED7FED;
+    uint32_t seed2 = 0xEEEEEEEE;
+    uint32_t ht = hash_type;
+    
+    for (i = 0; i < len; i++) {
+        uint8_t c = toupper(str[i]);
+        seed1 = encryption_table[(ht << 8) + c] ^ (seed1 + seed2);
+        seed2 = c + seed1 + seed2 + (seed2 << 5) + 3;
+    }
+    
+    *hash = seed1;
+    return ZE_SUCCESS;
+}
+
+ZE_RETVAL ze_mpq_decrypt(uint32_t *dwords, off_t len, uint32_t seed1) {
+    uint32_t seed2 = 0xEEEEEEEE;
+    off_t i;
+    for (i = 0; i < len; i++) {
+        seed2 += encryption_table[0x400 + (seed1 & 0xFF)];
+        dwords[i] ^= (seed1 + seed2);
+        seed1 = ((~seed1 << 0x15) + 0x11111111) | (seed1 >> 0x0B);
+        seed2 = dwords[i] + seed2 + (seed2 << 5) + 3;
+    }
+    
+    return ZE_SUCCESS;
+}
+
+ZE_RETVAL ze_mpq_read_table(ZE_MPQ *mpq, uint32_t offset, uint32_t count, uint8_t **bytes, char *key) {
+    ZE_RETVAL ret = ZE_SUCCESS;
+    uint8_t *data = NULL;
+    *bytes = NULL;
+
+    ret = ze_stream_seek(mpq->stream, offset);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    size_t len = count * 16;
+    
+    data = malloc(len);
+    if (data == NULL) {
+        ret = ZE_ERROR_MALLOC;
+        goto error;
+    }
+    
+    ret = ze_stream_next_n(mpq->stream, data, len);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    uint32_t hash;
+    ret = ze_mpq_hash((uint8_t *)key, strlen(key), ZE_MPQ_HASH_TYPE_TABLE, &hash);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    ret = ze_mpq_decrypt((uint32_t *)data, len / 4, hash);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    *bytes = data;
+    
+    return ZE_SUCCESS;
+error:
+    free(data);
+    *bytes = NULL;
     return ret;
 }
 
@@ -41,12 +219,43 @@ ZE_RETVAL ze_mpq_read_header(ZE_MPQ *mpq) {
     
     return ZE_SUCCESS;
 error:
+    mpq->header = NULL;
+    return ret;
+}
+
+ZE_RETVAL ze_mpq_read_archive_header(ZE_MPQ *mpq) {
+    ZE_RETVAL ret;
+    
+    if (mpq->header == NULL) {
+        ret = ZE_ERROR_LOAD_ORDER;
+        goto error;
+    }
+    
+    ret = ze_stream_seek(mpq->stream, mpq->header->archive_header_offset);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    ret = ze_stream_next_ptr(mpq->stream, (uint8_t **)&mpq->archive_header, sizeof(ZE_MPQ_ARCHIVE_HEADER));
+    if (ret != ZE_SUCCESS) goto error;
+    
+    if (memcmp(ZE_MPQ_ARCHIVE_MAGIC, mpq->archive_header->magic, 4) != 0) {
+        ret = ZE_ERROR_FORMAT;
+        goto error;
+    }
+    
+    return ZE_SUCCESS;
+error:
+    mpq->archive_header = NULL;
     return ret;
 }
 
 ZE_RETVAL ze_mpq_read_user_data(ZE_MPQ *mpq) {
     ZE_RETVAL ret;
     ZE_STREAM *user_data = NULL;
+    
+    if (mpq->header == NULL) {
+        ret = ZE_ERROR_LOAD_ORDER;
+        goto error;
+    }
     
     ret = ze_stream_seek(mpq->stream, sizeof(ZE_MPQ_HEADER));
     if (ret != ZE_SUCCESS) {
@@ -107,6 +316,9 @@ void ze_mpq_close(ZE_MPQ *mpq) {
     if (mpq->replay_info) {
         CFRelease(mpq->replay_info), mpq->replay_info = NULL;
     }
+    
+    free(mpq->hash_table), mpq->hash_table = NULL;
+    free(mpq->block_table), mpq->block_table = NULL;
     
     free(mpq);
 }

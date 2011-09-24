@@ -27,7 +27,11 @@ typedef enum {
     ZE_ERROR_MMAP,
     ZE_ERROR_FORMAT,
     ZE_ERROR_UNEXPECTED_EOF,
-    ZE_ERROR_CREATE
+    ZE_ERROR_CREATE,
+    ZE_ERROR_LOAD_ORDER,
+    ZE_ERROR_FILE_NOT_FOUND,
+    ZE_ERROR_ENCRYPTED,
+    ZE_ERROR_BZIP
 } ZE_RETVAL;
 
 ZE_RETVAL ze_stream_new(ZE_STREAM **stream, uint8_t *bytes, size_t len, ZE_STREAM_TYPE type);
@@ -38,7 +42,7 @@ ZE_RETVAL ze_stream_next(ZE_STREAM *stream, uint8_t *byte);
 ZE_RETVAL ze_stream_peek(ZE_STREAM *stream, uint8_t *byte);
 ZE_RETVAL ze_stream_next_n(ZE_STREAM *stream, uint8_t *buf, size_t len);
 ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *dict);
-ZE_RETVAL ze_stream_next_string(ZE_STREAM *stream, CFStringRef *str, size_t len);
+ZE_RETVAL ze_stream_next_string(ZE_STREAM *stream, CFTypeRef *str, size_t len);
 ZE_RETVAL ze_stream_next_var_int(ZE_STREAM *stream, int64_t *var_int);
 ZE_RETVAL ze_stream_next_stream(ZE_STREAM *stream, ZE_STREAM **s, size_t len);
 ZE_RETVAL ze_stream_next_ptr(ZE_STREAM *stream, uint8_t **p, size_t len);

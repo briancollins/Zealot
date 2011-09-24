@@ -117,7 +117,7 @@ ZE_RETVAL ze_stream_next_ptr(ZE_STREAM *stream, uint8_t **ptr, size_t len) {
     return ret;
 }
 
-ZE_RETVAL ze_stream_next_string(ZE_STREAM *stream, CFStringRef *str, size_t len) {
+ZE_RETVAL ze_stream_next_string(ZE_STREAM *stream, CFTypeRef *str, size_t len) {
     uint8_t *ptr = NULL;
     *str = NULL;
     ZE_RETVAL ret = ze_stream_next_ptr(stream, &ptr, len);
@@ -127,7 +127,12 @@ ZE_RETVAL ze_stream_next_string(ZE_STREAM *stream, CFStringRef *str, size_t len)
     
     *str = CFStringCreateWithBytes(NULL, ptr, len, kCFStringEncodingUTF8, false);
     if (*str == NULL) {
-        return ZE_ERROR_CREATE;
+        /* probably bad encoding in the string, so fall back on CFData */
+        *str = CFDataCreate(NULL, ptr, len);
+        
+        if (*str == NULL) {
+            return ZE_ERROR_CREATE;
+        }
     }
     return ZE_SUCCESS;
 }

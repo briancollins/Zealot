@@ -121,6 +121,22 @@
     ze_stream_close(s);    
 }
 
+- (void)testStreamDeserializeStringWithNull {
+    ZE_STREAM *s;
+    uint8_t bytes[] = {0x02, 0x05 << 1, 'h', '\0', '\0', 'l', 'o'};
+    ZE_RETVAL ret = ze_stream_new(&s, bytes, 7, ZE_STREAM_TYPE_NONE);
+    STAssertEquals(ret, ZE_SUCCESS, @"Should return success creating a stream");
+    
+    CFTypeRef r = NULL;
+    ret = ze_stream_deserialize(s, &r);
+    STAssertEquals(ret, ZE_SUCCESS, @"Should successfully deserialize a string");
+    STAssertEqualObjects(@"h\0\0lo", (NSString *)r, @"Should return correct string");
+    
+    if (r) CFRelease(r);
+        
+    ze_stream_close(s);    
+}
+
 - (void)testStreamDeserializeArray {
     ZE_STREAM *s;
     uint8_t bytes[] = {

@@ -24,23 +24,18 @@
         if (ret != ZE_SUCCESS) goto error;
         
         ZE_STREAM *s;
-        ret = ze_mpq_read_file(mpq, "replay.details", &s);
-        if (ret != ZE_SUCCESS) goto error;
-        
-        CFDictionaryRef dict;
-        ret = ze_stream_deserialize(s, (CFTypeRef *)&dict);
+        ret = ze_mpq_read_file(mpq, "replay.game.events", &s);
         if (ret != ZE_SUCCESS) goto error;
         
         ze_stream_close(s);
         
-        NSLog(@"%@", dict);
         ze_mpq_close(mpq);
     }
     
     return self;
     
 error:
-    printf("%d\n", ret);
+    NSLog(@"%d", ret);
     ze_mpq_close(mpq);
     [self release];
     return nil;

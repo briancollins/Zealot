@@ -34,6 +34,7 @@ ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s) {
     uint32_t hash_a, hash_b;
     uint8_t *data = NULL;
     uint8_t *uncompressed = NULL;
+    
     *s = NULL;
 
     ret = ze_mpq_hash((uint8_t *)filename, strlen(filename), ZE_MPQ_HASH_TYPE_HASH_A, &hash_a);
@@ -71,11 +72,55 @@ ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s) {
     ret = ze_stream_seek(mpq->stream, mpq->header->archive_header_offset + block->block_offset);
     if (ret != ZE_SUCCESS) goto error;
     
-    if (block->flags & ZE_BLOCK_SINGLE) {        
-        ret = ze_stream_next_ptr(mpq->stream, &data, block->archived_size);
+    ret = ze_stream_next_ptr(mpq->stream, &data, block->archived_size);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    if (!(block->flags & ZE_BLOCK_SINGLE)) {
+        uint32_t sector_size = 512 << mpq->archive_header->sector_size_shift;
+        uint32_t sectors = block->file_size / sector_size + 1;
+        uint32_t *positions = (uint32_t *)data;
+        size_t size = 0;
+        
+        uint32_t i;
+        uncompressed = malloc(block->file_size);
+        
+        if (uncompressed == NULL) {
+            ret = ZE_ERROR_MALLOC;
+            goto error;
+        }
+        
+        if (block->flags & ZE_BLOCK_CRC) {
+            sectors -= 1;
+        }
+        
+        for (i = 0; i < sectors - 1; i++) {
+            uint32_t sector_size = positions[i + 1] - positions[i];
+            size += sector_size;
+            uint8_t *p = uncompressed;
+            
+            if (size > block->file_size) {
+                ret = ZE_ERROR_TOO_BIG;
+                goto error;
+            }
+            
+            if (block->flags & ZE_BLOCK_COMPRESSED && block->file_size > block->archived_size) {
+                uint32_t dest_len = block->file_size;
+                int err = BZ2_bzBuffToBuffDecompress((char *)p, &dest_len, (char *)data + positions[i] + 1, sector_size, 0, 0);
+                if (err != BZ_OK) {
+                    ret = ZE_ERROR_BZIP;
+                    goto error;
+                }
+                
+                p += dest_len; 
+            } else {
+                memcpy(uncompressed, data + positions[i], sector_size);
+            }
+        }
+        
+        ret = ze_stream_new(s, uncompressed, block->file_size, ZE_STREAM_TYPE_FREE);
         if (ret != ZE_SUCCESS) goto error;
-
-        if ((block->flags & ZE_BLOCK_COMPRESSED) && data[0] == 16) {
+    } else {
+        if ((block->flags & ZE_BLOCK_COMPRESSED) && block->file_size > block->archived_size) {
             uint32_t dest_len = block->file_size;
             uncompressed = malloc(dest_len);
             if (uncompressed == NULL) {

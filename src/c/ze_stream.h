@@ -31,7 +31,8 @@ typedef enum {
     ZE_ERROR_LOAD_ORDER,
     ZE_ERROR_FILE_NOT_FOUND,
     ZE_ERROR_ENCRYPTED,
-    ZE_ERROR_BZIP
+    ZE_ERROR_BZIP,
+    ZE_ERROR_TOO_BIG
 } ZE_RETVAL;
 
 ZE_RETVAL ze_stream_new(ZE_STREAM **stream, uint8_t *bytes, size_t len, ZE_STREAM_TYPE type);

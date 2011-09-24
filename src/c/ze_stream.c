@@ -173,6 +173,8 @@ ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *type_ref) {
     int64_t i;
     int32_t dword;
     *type_ref = NULL;
+    CFNumberRef key = NULL;
+    CFTypeRef value = NULL;
     
     ret = ze_stream_next(stream, &byte);
     if (ret != ZE_SUCCESS) {
@@ -217,7 +219,6 @@ ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *type_ref) {
             }
             
             for (i = 0; i < long_len; i++) {
-                CFNumberRef key = NULL;
                 int64_t next_num;
                 ret = ze_stream_next_var_int(stream, &next_num);
                 if (ret != ZE_SUCCESS) goto error;
@@ -227,7 +228,6 @@ ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *type_ref) {
                     goto error;
                 }
                 
-                CFTypeRef value = NULL;
                 ret = ze_stream_deserialize(stream, &value);
                 if (ret != ZE_SUCCESS) goto error;
                 
@@ -277,9 +277,10 @@ ZE_RETVAL ze_stream_deserialize(ZE_STREAM *stream, CFTypeRef *type_ref) {
     return ZE_SUCCESS;
         
     error:
-    if (*type_ref != NULL) {
-        CFRelease(*type_ref), *type_ref = NULL;
-    }
+    if (value != NULL) CFRelease(value), value = NULL;
+    if (key != NULL) CFRelease(key), key = NULL;
+    if (*type_ref != NULL) CFRelease(*type_ref), *type_ref = NULL;
+    
     return ret;
 }
 

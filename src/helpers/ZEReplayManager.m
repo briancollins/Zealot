@@ -44,7 +44,7 @@ void directoryChanged(ConstFSEventStreamRef streamRef,
 }
 
 - (void)parseReplay:(NSString *)replay account:(NSString *)account {
-    [[ZEReplay alloc] initWithPath:replay account:account];
+    [[[ZEReplay alloc] initWithPath:replay account:account] autorelease];
 }
 
 - (void)parseAllReplayFiles {

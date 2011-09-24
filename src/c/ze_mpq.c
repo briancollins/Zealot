@@ -302,8 +302,11 @@ ZE_RETVAL ze_mpq_new_file(ZE_MPQ **mpq, char *path) {
     return ZE_SUCCESS;
     
 error:
-    ze_stream_close(m->stream), m->stream = NULL;
-    ze_mpq_close(m);
+    if (m != NULL) {
+        ze_stream_close(m->stream), m->stream = NULL;
+        ze_mpq_close(m);
+    }
+
     return ret;
 }
 

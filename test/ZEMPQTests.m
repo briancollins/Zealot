@@ -30,7 +30,7 @@
     ret = ze_mpq_new(&mpq, s);
     STAssertEquals(ret, ZE_SUCCESS, @"Should return success creating an mpq");
     
-    ret = ze_mpq_read_header(mpq);
+    ret = ze_mpq_read_user_header(mpq);
     STAssertEquals(ret, ZE_SUCCESS, @"Should return success reading header");
     
     ze_mpq_close(mpq);
@@ -51,7 +51,7 @@
     ret = ze_mpq_new(&mpq, s);
     STAssertEquals(ret, ZE_SUCCESS, @"Should return success creating an mpq");
     
-    ret = ze_mpq_read_header(mpq);
+    ret = ze_mpq_read_user_header(mpq);
     STAssertEquals(ret, ZE_ERROR_FORMAT, @"Should return bad format reading header");
     
     ze_mpq_close(mpq);
@@ -78,7 +78,7 @@
     ret = ze_mpq_new(&mpq, s);
     STAssertEquals(ret, ZE_SUCCESS, @"Should return success creating an mpq");
     
-    ret = ze_mpq_read_header(mpq);
+    ret = ze_mpq_read_user_header(mpq);
     STAssertEquals(ret, ZE_SUCCESS, @"Should return success reading header");
     
     ret = ze_mpq_read_user_data(mpq);
@@ -88,6 +88,43 @@
                        @"hello", [NSNumber numberWithInt:1],
                        @"world", [NSNumber numberWithInt:2], nil];
     STAssertEqualObjects(d, (NSDictionary *)mpq->replay_info, @"Should return correct replay info");
+    
+    ze_mpq_close(mpq);
+}
+
+- (NSString *)fixturePath:(NSString *)name {
+    return [[[[NSBundle bundleForClass:[self class]] resourcePath] 
+            stringByAppendingPathComponent:@"fixtures"]
+            stringByAppendingPathComponent:name];
+}
+
+- (void)testMPQBlockExtraction {
+    ZE_MPQ *mpq;
+    ZE_RETVAL ret;
+    const char *path = [[self fixturePath:@"starjeweled.SC2Replay"] UTF8String];
+    ret = ze_mpq_new_file(&mpq, (char *)path);
+    STAssertEquals(ret, ZE_SUCCESS, @"Should open replay fixture");
+    
+    ret = ze_mpq_read_headers(mpq);
+    STAssertEquals(ret, ZE_SUCCESS, @"Should read replay headers");
+    
+    NSString *folder = [self fixturePath:@"starjeweled"];
+    NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:folder error:NULL];
+    
+    for (NSString *file in files) {
+        NSData *d = [NSData dataWithContentsOfFile:[folder stringByAppendingPathComponent:file]];
+
+        ZE_STREAM *s;
+        ret = ze_mpq_read_file(mpq, (char *)[file UTF8String], &s);
+        STAssertEquals(ret, ZE_SUCCESS, @"Should get file contents for %@", file);
+        
+        NSData *d2 = [NSData dataWithBytes:s->bytes length:s->len];
+        
+        STAssertTrue([d isEqualToData:d2], @"Should have the same data for %@", file);
+        /* because STAssertEqualObjects will print out the entire NSData contents on fail */
+        
+        ze_stream_close(s);
+    }
     
     ze_mpq_close(mpq);
 }

@@ -29,6 +29,26 @@ error:
     return ret;
 }
 
+ZE_RETVAL ze_mpq_read_headers(ZE_MPQ *mpq) {
+    ZE_RETVAL ret;
+    
+    ret = ze_mpq_read_user_header(mpq);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    ret = ze_mpq_read_user_data(mpq);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    ret = ze_mpq_read_archive_header(mpq);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    ret = ze_mpq_read_tables(mpq);
+    if (ret != ZE_SUCCESS) goto error;
+    return ZE_SUCCESS;
+    
+error:
+    return ret;
+}
+
 ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s) {
     uint8_t ret;
     uint32_t hash_a, hash_b;
@@ -37,6 +57,10 @@ ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s) {
     
     *s = NULL;
 
+    if (mpq->header == NULL || mpq->archive_header == NULL) {
+        return ZE_ERROR_LOAD_ORDER;
+    }
+    
     ret = ze_mpq_hash((uint8_t *)filename, strlen(filename), ZE_MPQ_HASH_TYPE_HASH_A, &hash_a);
     if (ret != ZE_SUCCESS) goto error;
     
@@ -79,6 +103,8 @@ ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s) {
         uint32_t sector_size = 512 << mpq->archive_header->sector_size_shift;
         uint32_t sectors = block->file_size / sector_size + 1;
         uint32_t *positions = (uint32_t *)data;
+        uint32_t offset = 0;
+        
         size_t size = 0;
         
         uint32_t i;
@@ -89,14 +115,12 @@ ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s) {
             goto error;
         }
         
-        if (block->flags & ZE_BLOCK_CRC) {
-            sectors -= 1;
-        }
         
-        for (i = 0; i < sectors - 1; i++) {
-            uint32_t sector_size = positions[i + 1] - positions[i];
+        for (i = 0; i < sectors; i++) {
+            uint32_t start = positions[i];
+            uint32_t end = i + 1 < sectors ? positions[i + 1] : block->archived_size;
+            uint32_t sector_size = end - start;
             size += sector_size;
-            uint8_t *p = uncompressed;
             
             if (size > block->file_size) {
                 ret = ZE_ERROR_TOO_BIG;
@@ -104,16 +128,17 @@ ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s) {
             }
             
             if (block->flags & ZE_BLOCK_COMPRESSED && block->file_size > block->archived_size) {
-                uint32_t dest_len = block->file_size;
-                int err = BZ2_bzBuffToBuffDecompress((char *)p, &dest_len, (char *)data + positions[i] + 1, sector_size, 0, 0);
+                uint32_t dest_len = block->file_size - offset;
+                int err = BZ2_bzBuffToBuffDecompress((char *)uncompressed + offset, &dest_len, (char *)data + start + 1, sector_size, 0, 0);
+
                 if (err != BZ_OK) {
                     ret = ZE_ERROR_BZIP;
                     goto error;
                 }
                 
-                p += dest_len; 
+                offset += dest_len;
             } else {
-                memcpy(uncompressed, data + positions[i], sector_size);
+                memcpy(uncompressed, data + start, sector_size);
             }
         }
         
@@ -241,7 +266,7 @@ error:
     return ret;
 }
 
-ZE_RETVAL ze_mpq_read_header(ZE_MPQ *mpq) {
+ZE_RETVAL ze_mpq_read_user_header(ZE_MPQ *mpq) {
     ZE_RETVAL ret;
     ret = ze_stream_seek(mpq->stream, 0);
     if (ret != ZE_SUCCESS) {

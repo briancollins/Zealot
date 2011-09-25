@@ -79,7 +79,7 @@ typedef enum {
 
 ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, ZE_STREAM *stream);
 ZE_RETVAL ze_mpq_new_file(ZE_MPQ **mpq, char *path);
-ZE_RETVAL ze_mpq_read_header(ZE_MPQ *mpq);
+ZE_RETVAL ze_mpq_read_user_header(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_archive_header(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_user_data(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_table(ZE_MPQ *mpq, uint32_t offset, uint32_t count, uint8_t **bytes, char *key);
@@ -87,6 +87,7 @@ ZE_RETVAL ze_mpq_decrypt(uint32_t *dwords, off_t len, uint32_t seed1);
 ZE_RETVAL ze_mpq_hash(uint8_t *str, size_t len, ZE_MPQ_HASH_TYPE hash_type, uint32_t *hash);
 ZE_RETVAL ze_mpq_read_tables(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s);
+ZE_RETVAL ze_mpq_read_headers(ZE_MPQ *mpq);
 
 void ze_mpq_close(ZE_MPQ *mpq);
 

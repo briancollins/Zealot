@@ -11,22 +11,13 @@
         ret = ze_mpq_new_file(&mpq, (char *)[path UTF8String]);
         if (ret != ZE_SUCCESS) goto error;
         
-        ret = ze_mpq_read_header(mpq);
-        if (ret != ZE_SUCCESS) goto error;
-        
-        ret = ze_mpq_read_user_data(mpq);
-        if (ret != ZE_SUCCESS) goto error;
-        
-        ret = ze_mpq_read_archive_header(mpq);
-        if (ret != ZE_SUCCESS) goto error;
-        
-        ret = ze_mpq_read_tables(mpq);
+        ret = ze_mpq_read_headers(mpq);
         if (ret != ZE_SUCCESS) goto error;
         
         ZE_STREAM *s;
         ret = ze_mpq_read_file(mpq, "replay.game.events", &s);
         if (ret != ZE_SUCCESS) goto error;
-        
+                
         ze_stream_close(s);
         
         ze_mpq_close(mpq);

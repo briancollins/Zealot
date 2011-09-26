@@ -13,11 +13,17 @@
         
         ret = ze_mpq_read_headers(mpq);
         if (ret != ZE_SUCCESS) goto error;
-        
+
         ZE_STREAM *s;
-        ret = ze_mpq_read_file(mpq, "replay.game.events", &s);
+        ret = ze_mpq_read_file(mpq, "replay.details", &s);
         if (ret != ZE_SUCCESS) goto error;
-                
+        
+        CFDictionaryRef dict;
+        ret = ze_stream_deserialize(s, (CFTypeRef *)&dict);
+        if (ret != ZE_SUCCESS) goto error;
+        
+        CFRelease(dict);
+        
         ze_stream_close(s);
         
         ze_mpq_close(mpq);
@@ -26,7 +32,7 @@
     return self;
     
 error:
-    NSLog(@"%d", ret);
+            NSLog(@"%d", ret);
     ze_mpq_close(mpq);
     [self release];
     return nil;

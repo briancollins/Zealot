@@ -1,5 +1,6 @@
 #import "ZEAppDelegate.h"
 #import "ZEReplayManager.h"
+#import "SRScopeBar.h"
 
 @implementation ZEAppDelegate
 

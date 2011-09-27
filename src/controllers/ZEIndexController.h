@@ -2,6 +2,7 @@
 @interface ZEIndexController : NSViewController <SRScopeBarDataSource, NSTableViewDataSource, NSTableViewDelegate>
 
 @property (nonatomic, retain) IBOutlet SRScopeBar *scopeBar;
+@property (nonatomic, retain) IBOutlet NSTableView *tableView;
 @property (nonatomic, retain) SRScopeBarGroup *typeGroup;
 @property (nonatomic, retain) SRScopeBarGroup *matchupGroup;
 @property (nonatomic, retain) NSArray *types;

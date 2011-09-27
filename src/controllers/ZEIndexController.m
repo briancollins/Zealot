@@ -3,7 +3,7 @@
 #import "ZEIndexController.h"
 
 @implementation ZEIndexController
-@synthesize scopeBar, typeGroup, matchupGroup, types, matchups;
+@synthesize scopeBar, tableView, typeGroup, matchupGroup, types, matchups;
 
 - (void)dealloc {
     self.scopeBar = nil;
@@ -11,6 +11,7 @@
     self.matchupGroup = nil;
     self.types = nil;
     self.matchups = nil;
+    self.tableView = nil;
     [super dealloc];
 }
 

@@ -26,6 +26,7 @@
         if (ret != ZE_SUCCESS) goto error;
         
         ret = ze_mpq_read_attributes(mpq, &attributes);
+        if (ret != ZE_SUCCESS) goto error;
         
         ZE_STREAM *s;
         ret = ze_mpq_read_file(mpq, "replay.details", &s);

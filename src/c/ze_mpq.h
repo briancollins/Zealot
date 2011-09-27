@@ -52,6 +52,13 @@ typedef struct {
     uint32_t file_size;
     uint32_t flags;
 } ZE_MPQ_BLOCK_TABLE_ENTRY;
+
+typedef struct {
+    uint32_t header;
+    uint32_t attribute_id;
+    uint8_t player;
+    uint8_t str[4];
+} ZE_MPQ_ATTRIBUTE;
 #pragma pack(pop)
 
 typedef struct {

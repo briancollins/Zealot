@@ -142,12 +142,141 @@ error:
 ZE_RETVAL ze_mpq_read_attributes(ZE_MPQ *mpq, CFArrayRef *attributes) {
     ZE_RETVAL ret;
     uint64_t build;
+    ZE_STREAM *s = NULL;
+    CFMutableArrayRef attrs = NULL;
+    CFStringRef attr_name_string = NULL;
+    CFStringRef attr_value_string = NULL;
+    CFNumberRef attr_player_number = NULL;
+    CFDictionaryRef attr_dictionary = NULL;
+    CFTypeRef keys[3] = { NULL };
+    *attributes = NULL;
+    
     ret = ze_mpq_build(mpq, &build);
     if (ret != ZE_SUCCESS) goto error;
-    printf("%llu", build);
+    
+    ret = ze_mpq_read_file(mpq, "replay.attributes.events", &s);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    
+    if (build < 17326)
+        ret = ze_stream_skip(s, 4);
+    else
+        ret = ze_stream_skip(s, 5);
+    
+    if (ret != ZE_SUCCESS) goto error;
+    
+    uint32_t *count;
+    
+    ret = ze_stream_next_ptr(s, (uint8_t **)&count, sizeof(uint32_t));
+    if (ret != ZE_SUCCESS) goto error;
+    
+    attrs = CFArrayCreateMutable(NULL, *count, &kCFTypeArrayCallBacks);
+    if (attrs == NULL) {
+        ret = ZE_ERROR_CREATE;
+        goto error;
+    }
+
+    keys[0] = CFStringCreateWithCString(NULL, "name", kCFStringEncodingUTF8);
+    if (keys[0] == NULL) {
+        ret = ZE_ERROR_CREATE; 
+        goto error;
+    }
+    keys[1] = CFStringCreateWithCString(NULL, "value", kCFStringEncodingUTF8);
+    if (keys[1] == NULL) {
+        ret = ZE_ERROR_CREATE; 
+        goto error;
+    }
+    keys[2] = CFStringCreateWithCString(NULL, "player", kCFStringEncodingUTF8);
+    if (keys[2] == NULL) {
+        ret = ZE_ERROR_CREATE; 
+        goto error;
+    }
+    
+    uint32_t i;
+    for (i = 0; i < *count; i++) {
+        ZE_MPQ_ATTRIBUTE *a;
+        const char *attr_name = NULL;
+        ret = ze_stream_next_ptr(s, (uint8_t **)&a, sizeof(ZE_MPQ_ATTRIBUTE));
+        if (ret != ZE_SUCCESS) goto error;
+        
+        switch (a->attribute_id) {
+            case 0x01F4: attr_name = "player_type"; break;
+            case 0x07D1: attr_name = "game_type"; break;
+            case 0x0BB8: attr_name = "game_speed"; break;
+            case 0x0BB9: attr_name = "player_race"; break;
+            case 0x0BBA: attr_name = "player_color"; break;
+            case 0x0BBB: attr_name = "handicap"; break;
+            case 0x0BBC: attr_name = "difficulty"; break;
+            case 0x0BC1: attr_name = "category"; break;
+            case 0x07D2: attr_name = "teams_1v1"; break;
+            case 0x07D3: attr_name = "teams_2v2"; break;
+            case 0x07D4: attr_name = "teams_3v3"; break;
+            case 0x07D5: attr_name = "teams_4v4"; break;
+            case 0x07D6: attr_name = "teams_ffa"; break;
+            case 0x07D8: attr_name = "teams_6v6"; break;
+        }
+        
+        if (attr_name == NULL) continue;
+        
+        attr_name_string = CFStringCreateWithCString(NULL, attr_name, kCFStringEncodingUTF8);
+        if (attr_name_string == NULL) {
+            ret = ZE_ERROR_CREATE;
+            goto error;
+        }
+        
+        char str[5] = { '\0' };
+        
+        int j, k = 0;
+        for (j = 3; j >= 0; j--) {
+            if (a->str[j] != '\0') {
+                str[k++] = a->str[j];
+            }
+        }
+        attr_value_string = CFStringCreateWithBytes(NULL, (const UInt8 *)str, strlen(str), kCFStringEncodingUTF8, false);
+        if (attr_value_string == NULL) {
+            ret = ZE_ERROR_CREATE;
+            goto error;
+        }
+        
+        int n = a->player;
+        attr_player_number = CFNumberCreate(NULL, kCFNumberIntType, &n);
+        if (attr_player_number == NULL) {
+            ret = ZE_ERROR_CREATE;
+            goto error;
+        }
+        
+        CFTypeRef values[3];
+        values[0] = attr_name_string;
+        values[1] = attr_value_string;
+        values[2] = attr_player_number;
+        
+        attr_dictionary = CFDictionaryCreate(NULL, keys, values, 3, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        
+        CFRelease(attr_name_string), attr_name_string = NULL;
+        CFRelease(attr_value_string), attr_value_string = NULL;
+        CFRelease(attr_player_number), attr_player_number = NULL;
+        
+        CFArrayAppendValue(attrs, attr_dictionary);
+        CFRelease(attr_dictionary), attr_dictionary = NULL;
+    }
+    
+    *attributes = attrs;
+    ze_stream_close(s);
+    if (keys[0] != NULL) CFRelease(keys[0]), keys[0] = NULL;
+    if (keys[1] != NULL) CFRelease(keys[1]), keys[1] = NULL;
+    if (keys[2] != NULL) CFRelease(keys[2]), keys[2] = NULL;
     
     return ZE_SUCCESS;
 error:
+    if (attr_name_string != NULL) CFRelease(attr_name_string), attr_name_string = NULL;
+    if (attr_value_string != NULL) CFRelease(attr_value_string), attr_value_string = NULL;
+    if (attr_player_number != NULL) CFRelease(attr_player_number), attr_player_number = NULL;
+    if (attr_dictionary != NULL) CFRelease(attr_dictionary), attr_dictionary = NULL;
+    if (attrs != NULL) CFRelease(attrs), attrs = NULL;
+    if (keys[0] != NULL) CFRelease(keys[0]), keys[0] = NULL;
+    if (keys[1] != NULL) CFRelease(keys[1]), keys[1] = NULL;
+    if (keys[2] != NULL) CFRelease(keys[2]), keys[2] = NULL;
+    ze_stream_close(s);
     return ret;
 }
 

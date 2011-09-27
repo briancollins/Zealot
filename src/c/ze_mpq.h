@@ -80,6 +80,7 @@ typedef enum {
 } ZE_BLOCK_FLAGS;
 
 ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, ZE_STREAM *stream);
+ZE_RETVAL ze_mpq_build(ZE_MPQ *mpq, uint64_t *build);
 ZE_RETVAL ze_mpq_new_file(ZE_MPQ **mpq, char *path);
 ZE_RETVAL ze_mpq_read_user_header(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_archive_header(ZE_MPQ *mpq);
@@ -91,6 +92,7 @@ ZE_RETVAL ze_mpq_read_tables(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s);
 ZE_RETVAL ze_mpq_read_headers(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_initdata(ZE_MPQ *mpq, CFStringRef *region, CFStringRef *account_id);
+ZE_RETVAL ze_mpq_read_attributes(ZE_MPQ *mpq, CFArrayRef *attributes);
 
 void ze_mpq_close(ZE_MPQ *mpq);
 

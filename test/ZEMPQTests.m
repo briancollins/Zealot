@@ -152,4 +152,22 @@
     ze_mpq_close(mpq);
 }
 
+- (void)testMPQBuild {
+    ZE_MPQ *mpq;
+    ZE_RETVAL ret;
+    const char *path = [[self fixturePath:@"starjeweled.SC2Replay"] UTF8String];
+    ret = ze_mpq_new_file(&mpq, (char *)path);
+    STAssertEquals(ret, ZE_SUCCESS, @"Should open replay fixture");
+    
+    ret = ze_mpq_read_headers(mpq);
+    STAssertEquals(ret, ZE_SUCCESS, @"Should read replay headers");
+    
+    uint64_t build;
+    ret = ze_mpq_build(mpq, &build);
+    STAssertEquals(ret, ZE_SUCCESS, @"Should get build number");    
+    
+    STAssertEquals(build, (uint64_t)19269, @"Should get correct build number");
+    ze_mpq_close(mpq);
+}
+
 @end

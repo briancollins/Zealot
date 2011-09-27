@@ -139,6 +139,58 @@ error:
     return ret;
 }
 
+ZE_RETVAL ze_mpq_read_attributes(ZE_MPQ *mpq, CFArrayRef *attributes) {
+    ZE_RETVAL ret;
+    uint64_t build;
+    ret = ze_mpq_build(mpq, &build);
+    if (ret != ZE_SUCCESS) goto error;
+    printf("%llu", build);
+    
+    return ZE_SUCCESS;
+error:
+    return ret;
+}
+
+ZE_RETVAL ze_mpq_build(ZE_MPQ *mpq, uint64_t *build) {
+    ZE_RETVAL ret;
+    CFNumberRef n = NULL;
+    if (mpq->replay_info == NULL) {
+        ret = ZE_ERROR_LOAD_ORDER;
+        goto error;
+    }
+    
+    int i = 1;
+    n = CFNumberCreate(NULL, kCFNumberIntType, &i);
+    CFDictionaryRef d = CFDictionaryGetValue(mpq->replay_info, n);
+    
+    if (d == NULL || CFGetTypeID(d) != CFDictionaryGetTypeID()) {
+        ret = ZE_ERROR_FORMAT;
+        goto error;
+    }
+    
+    CFRelease(n), n = NULL;
+    i = 4;
+    n = CFNumberCreate(NULL, kCFNumberIntType, &i);
+    CFNumberRef result = CFDictionaryGetValue(d, n);
+    if (result == NULL || CFGetTypeID(result) != CFNumberGetTypeID()) {
+        ret = ZE_ERROR_FORMAT;
+        goto error;
+    }
+    
+    uint64_t b;
+    if (!CFNumberGetValue(result, kCFNumberLongLongType, &b)) {
+        ret = ZE_ERROR_FORMAT;
+        goto error;
+    } 
+    
+    *build = b;
+    return ZE_SUCCESS;
+    
+error:
+    if (n != NULL) CFRelease(n), n = NULL;
+    return ret;
+}
+
 ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s) {
     uint8_t ret;
     uint32_t hash_a, hash_b;

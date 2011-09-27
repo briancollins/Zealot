@@ -1,13 +1,25 @@
 #import "ZEReplay.h"
 #import "ze_mpq.h"
+#import "ZEMap.h"
+#import "ZEReplayPlayer.h"
+#import "ZEPlayer.h"
+#import "ZEAppDelegate.h"
+
+@interface ZEReplay ()
+- (ZEPlayer *)findPlayerWithId:(NSString *)bnetId inRegion:(NSString *)region;
+- (ZEMap *)findMap:(NSString *)name;
+@end
 
 @implementation ZEReplay
-@dynamic replayPlayers, type, category;
+@dynamic replayPlayers, type, category, region, duration, map;
 
 - (void)willTurnIntoFault {
     self.replayPlayers = nil;
     self.type = nil;
     self.category = nil;
+    self.duration = nil;
+    self.map = nil;
+    self.region = nil;
     [super willTurnIntoFault];
 }
 
@@ -20,7 +32,7 @@
     ZE_MPQ_ATTRIBUTE *attributes = NULL;
     uint32_t attributes_count = 0;
     
-    if ((self = [super initWithEntity:[self entity] insertIntoManagedObjectContext:nil])) {
+    if ((self = [super init])) {
 
         ret = ze_mpq_new_file(&mpq, (char *)[path UTF8String]);
         if (ret != ZE_SUCCESS) goto error;
@@ -32,6 +44,8 @@
 
         ret = ze_mpq_read_initdata(mpq, &region, &account_id);
         if (ret != ZE_SUCCESS) goto error;
+        
+        self.region = (NSString *)region;
         
         ret = ze_mpq_read_attributes(mpq, &attributes, &attributes_count);
         if (ret != ZE_SUCCESS) goto error;
@@ -83,7 +97,6 @@
             }
         }
         
-        NSLog(@"%@ %@", self.category, self.type);
         ZE_STREAM *s;
         ret = ze_mpq_read_file(mpq, "replay.details", &s);
         if (ret != ZE_SUCCESS) goto error;
@@ -92,11 +105,15 @@
         ret = ze_stream_deserialize(s, (CFTypeRef *)&dict);
         if (ret != ZE_SUCCESS) goto error;
 
+        NSString *mapName = [(NSDictionary *)dict objectForKey:[NSNumber numberWithInt:1]];
+        ZEMap *m = [self findMap:mapName];
+        m.name = mapName;
+        self.map = m;
         
         NSUInteger i = 0;
         for (NSDictionary *player in [(NSDictionary *)dict objectForKey:[NSNumber numberWithInt:0]]) {
             NSString *name = [player objectForKey:[NSNumber numberWithInt:0]];
-            NSString *bnetId = [[player objectForKey:[NSNumber numberWithInt:1]] 
+            NSNumber *bnetId = [[player objectForKey:[NSNumber numberWithInt:1]] 
                                 objectForKey:[NSNumber numberWithInt:4]];
             NSNumber *outcome = [player objectForKey:[NSNumber numberWithInt:8]];
             
@@ -126,9 +143,25 @@
                 }
             }
             
+            ZEReplayPlayer *rp = [[[ZEReplayPlayer alloc] init] autorelease];
+            rp.replay = self;
+            rp.outcome = [outcome stringValue];
+            rp.race = race;
+            rp.won = [NSNumber numberWithBool:[outcome isEqualToNumber:[NSNumber numberWithInt:2]]];
+            rp.team = [NSNumber numberWithInt:1]; // TODO
+            
+            ZEPlayer *p;
+            p = [self findPlayerWithId:[bnetId stringValue] inRegion:(NSString *)region];
+            p.name = name;
+            p.bnetId = [bnetId stringValue];
+            p.region = (NSString *)region;
+            rp.player = p;
+            
+            [self.replayPlayers addObject:rp];
             
             i++;
         }
+        
         
         CFRelease(dict);
         CFRelease(region);
@@ -150,6 +183,48 @@ error:
     ze_mpq_close(mpq);
     [self release];
     return nil;
+}
+
+- (ZEPlayer *)findPlayerWithId:(NSString *)bnetId inRegion:(NSString *)region {
+    NSManagedObjectContext *moc = [ZEAppDelegate managedObjectContext];
+    NSEntityDescription *entityDescription = [NSEntityDescription
+                                              entityForName:@"ZEPlayer" inManagedObjectContext:moc];
+    NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
+    [request setEntity:entityDescription];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:
+                              @"bnetId = %@ AND region = %@", bnetId, region];
+    [request setPredicate:predicate];
+    [request setFetchLimit:1];
+    
+    NSError *error = nil;
+    NSArray *array = [moc executeFetchRequest:request error:&error];
+    if (array == nil || array.count == 0) {
+        return [[[ZEPlayer alloc] init] autorelease];
+    } else {
+        return [array objectAtIndex:0];
+    }
+}
+
+- (ZEMap *)findMap:(NSString *)name {
+    NSManagedObjectContext *moc = [ZEAppDelegate managedObjectContext];
+    NSEntityDescription *entityDescription = [NSEntityDescription
+                                              entityForName:@"ZEMap" inManagedObjectContext:moc];
+    NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
+    [request setEntity:entityDescription];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:
+                              @"name = %@", name];
+    [request setPredicate:predicate];
+    [request setFetchLimit:1];
+    
+    NSError *error = nil;
+    NSArray *array = [moc executeFetchRequest:request error:&error];
+    if (array == nil || array.count == 0) {
+        return [[[ZEMap alloc] init] autorelease];
+    } else {
+        return [array objectAtIndex:0];
+    }
 }
 
 @end

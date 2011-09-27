@@ -1,6 +1,7 @@
 #import <CoreServices/CoreServices.h>
 #import "ZEReplayManager.h"
 #import "ZEReplay.h"
+#import "ZEAppDelegate.h"
 
 @interface ZEReplayManager ()
 @property (readonly) NSString *accountsPath;
@@ -46,7 +47,7 @@ void directoryChanged(ConstFSEventStreamRef streamRef,
 
 - (void)parseReplay:(NSString *)replay account:(NSString *)account {
     if ([replay hasSuffix:@".SC2Replay"]) {
-        [[[ZEReplay alloc] initWithPath:replay account:account] autorelease];
+        ZEReplay *r = [[[ZEReplay alloc] initWithPath:replay account:account] autorelease];
     }
 }
 
@@ -74,6 +75,11 @@ void directoryChanged(ConstFSEventStreamRef streamRef,
                 }
             }
         }
+    }
+    NSError *error;
+    
+    if (![[ZEAppDelegate managedObjectContext] save:&error]) {
+        NSLog(@"%@", error);
     }
 }
 

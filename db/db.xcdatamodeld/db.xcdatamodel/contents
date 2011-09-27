@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="562" systemVersion="11B26" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="ZEReplay">
+    <entity name="ZEMap" representedClassName="ZEMap">
+        <attribute name="name" attributeType="String" indexed="YES"/>
+        <relationship name="replays" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ZEReplay" inverseName="map" inverseEntity="ZEReplay"/>
+    </entity>
+    <entity name="ZEPlayer" representedClassName="ZEPlayer">
+        <attribute name="bnetId" attributeType="String" indexed="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="region" attributeType="String" indexed="YES"/>
+        <relationship name="replayPlayers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ZEReplayPlayer" inverseName="player" inverseEntity="ZEReplayPlayer"/>
+    </entity>
+    <entity name="ZEReplay" representedClassName="ZEReplay">
         <attribute name="category" attributeType="String" indexed="YES"/>
         <attribute name="duration" optional="YES" attributeType="Integer 64" defaultValueString="0"/>
+        <attribute name="region" attributeType="String"/>
         <attribute name="type" attributeType="String" indexed="YES"/>
+        <relationship name="map" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ZEMap" inverseName="replays" inverseEntity="ZEMap"/>
+        <relationship name="replayPlayers" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="ZEReplayPlayer" inverseName="replay" inverseEntity="ZEReplayPlayer"/>
+    </entity>
+    <entity name="ZEReplayPlayer" representedClassName="ZEReplayPlayer">
+        <attribute name="outcome" attributeType="String"/>
+        <attribute name="race" attributeType="String"/>
+        <attribute name="team" attributeType="Integer 16" defaultValueString="0"/>
+        <attribute name="won" attributeType="Boolean"/>
+        <relationship name="player" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ZEPlayer" inverseName="replayPlayers" inverseEntity="ZEPlayer"/>
+        <relationship name="replay" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ZEReplay" inverseName="replayPlayers" inverseEntity="ZEReplay"/>
     </entity>
     <elements>
-        <element name="ZEReplay" positionX="160" positionY="192" width="128" height="90"/>
+        <element name="ZEReplay" positionX="232" positionY="174" width="128" height="135"/>
+        <element name="ZEPlayer" positionX="574" positionY="324" width="128" height="105"/>
+        <element name="ZEReplayPlayer" positionX="412" positionY="309" width="128" height="135"/>
+        <element name="ZEMap" positionX="421" positionY="207" width="128" height="75"/>
     </elements>
 </model>

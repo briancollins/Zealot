@@ -1,10 +1,14 @@
 #import "ZEModel.h"
+@class ZEMap;
 
 @interface ZEReplay : ZEModel
 
-@property (nonatomic, retain) NSOrderedSet *replayPlayers;
-@property (nonatomic, retain) NSString *type;
-@property (nonatomic, retain) NSString *category;
+@property (nonatomic, retain) NSMutableOrderedSet *replayPlayers;
+@property (nonatomic, copy) NSString *type;
+@property (nonatomic, copy) NSString *category;
+@property (nonatomic, copy) NSString *region;
+@property (nonatomic, retain) NSNumber *duration;
+@property (nonatomic, retain) ZEMap *map;
 
 - (id)initWithPath:(NSString *)path account:(NSString *)account;
 

@@ -9,6 +9,8 @@
 #define ZE_MPQ_SEED_2 0xEEEEEEEE
 #define ZE_MPQ_HASH_ENTRY_EMPTY 0xFFFFFFFF
 #define ZE_MPQ_HASH_ENTRY_DELETED 0xFFFFFFFE
+#define ZE_DFLT 0x746c6644
+#define ZE_S2MA 0x616D3273
 
 #pragma pack(push)
 #pragma pack(1)
@@ -88,6 +90,7 @@ ZE_RETVAL ze_mpq_hash(uint8_t *str, size_t len, ZE_MPQ_HASH_TYPE hash_type, uint
 ZE_RETVAL ze_mpq_read_tables(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s);
 ZE_RETVAL ze_mpq_read_headers(ZE_MPQ *mpq);
+ZE_RETVAL ze_mpq_read_initdata(ZE_MPQ *mpq, CFStringRef *region, CFStringRef *account_id);
 
 void ze_mpq_close(ZE_MPQ *mpq);
 

@@ -129,4 +129,27 @@
     ze_mpq_close(mpq);
 }
 
+- (void)testMPQInitData {
+    ZE_MPQ *mpq;
+    ZE_RETVAL ret;
+    const char *path = [[self fixturePath:@"starjeweled.SC2Replay"] UTF8String];
+    ret = ze_mpq_new_file(&mpq, (char *)path);
+    STAssertEquals(ret, ZE_SUCCESS, @"Should open replay fixture");
+
+    ret = ze_mpq_read_headers(mpq);
+    STAssertEquals(ret, ZE_SUCCESS, @"Should read replay headers");
+
+    CFStringRef account_id;
+    CFStringRef region;
+    ze_mpq_read_initdata(mpq, &region, &account_id);
+    STAssertEquals(ret, ZE_SUCCESS, @"Should read initdata");
+    
+    STAssertEqualObjects((NSString *)account_id, @"2-S2-1-165251", @"Should have correct account ID");
+    STAssertEqualObjects((NSString *)region, @"EU", @"Should have correct account ID");
+    CFRelease(account_id);
+    CFRelease(region);
+    
+    ze_mpq_close(mpq);
+}
+
 @end

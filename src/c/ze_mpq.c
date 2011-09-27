@@ -49,6 +49,96 @@ error:
     return ret;
 }
 
+ZE_RETVAL ze_mpq_read_initdata(ZE_MPQ *mpq, CFStringRef *region, CFStringRef *account_id) {
+    ZE_RETVAL ret;
+    ZE_STREAM *s = NULL;
+    CFStringRef r = NULL;
+    CFStringRef a = NULL;
+    
+    *region = NULL;
+    *account_id = NULL;
+    
+    ret = ze_mpq_read_file(mpq, "replay.initdata", &s);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    uint8_t n;
+    ret = ze_stream_next(s, &n);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    uint8_t i;
+    for (i = 0; i < n; i++) {
+        uint8_t len;
+        ret = ze_stream_next(s, &len);
+        if (ret != ZE_SUCCESS) goto error;
+        
+        ret = ze_stream_skip(s, 5 + len);
+        if (ret != ZE_SUCCESS) goto error;
+    }
+    
+    ret = ze_stream_skip(s, 5);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    uint32_t *magic;
+    ret = ze_stream_next_ptr(s, (uint8_t **)&magic, sizeof(uint32_t));
+    
+    if (ret != ZE_SUCCESS) goto error;
+    if (*magic != ZE_DFLT) {
+        printf("%08x\n", *magic);
+        ret = ZE_ERROR_FORMAT;
+        goto error;
+    }
+    
+    ret = ze_stream_skip(s, 15);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    ret = ze_stream_next(s, &i);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    uint8_t *s_account_id = NULL;
+    ret = ze_stream_next_ptr(s, (uint8_t **)&s_account_id, i);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    a = CFStringCreateWithBytes(NULL, (const UInt8 *)s_account_id, i, kCFStringEncodingUTF8, false);
+    if (a == NULL) {
+        ret = ZE_ERROR_CREATE;
+        goto error;
+    }
+    
+    ret = ze_stream_skip(s, 684);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    ret = ze_stream_next_ptr(s, (uint8_t **)&magic, sizeof(uint32_t));
+    if (ret != ZE_SUCCESS) goto error;
+    if (*magic != ZE_S2MA) {
+        ret = ZE_ERROR_FORMAT;
+        goto error;
+    }
+    
+    ret = ze_stream_skip(s, 2);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    uint8_t *s_region;
+    ret = ze_stream_next_ptr(s, (uint8_t **)&s_region, 2);
+    if (ret != ZE_SUCCESS) goto error;
+    
+    r = CFStringCreateWithBytes(NULL, (const UInt8 *)s_region, 2, kCFStringEncodingUTF8, false);
+    if (r == NULL) {
+        ret = ZE_ERROR_CREATE;
+        goto error;
+    }
+    
+    *account_id = a;
+    *region = r;
+    ze_stream_close(s);
+    
+    return ZE_SUCCESS;
+error:
+    if (r != NULL) CFRelease(r), r = NULL;
+    if (a != NULL) CFRelease(a), a = NULL;
+    ze_stream_close(s);
+    return ret;
+}
+
 ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s) {
     uint8_t ret;
     uint32_t hash_a, hash_b;

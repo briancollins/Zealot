@@ -36,6 +36,13 @@
         
         CFRelease(dict);
         
+        CFStringRef account_id;
+        CFStringRef region;
+        ret = ze_mpq_read_initdata(mpq, &region, &account_id);
+        if (ret != ZE_SUCCESS) goto error;
+        
+        NSLog(@"%@ %@", account_id, region);
+        
         ze_stream_close(s);
         
         ze_mpq_close(mpq);

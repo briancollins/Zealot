@@ -82,6 +82,18 @@ typedef struct {
 #define ZE_ATTR_PROTOSS 0x50726F74
 #define ZE_ATTR_RANDOM  0x52414E44
 
+#define ZE_ATTR_PRIVATE 0x50726976
+#define ZE_ATTR_LADDER  0x00416D6D
+#define ZE_ATTR_PUBLIC  0x00507562
+
+#define ZE_ATTR_1V1     0x00317631
+#define ZE_ATTR_2V2     0x00327632
+#define ZE_ATTR_3V3     0x00337633
+#define ZE_ATTR_4V4     0x00347634
+#define ZE_ATTR_6V6     0x00367636
+#define ZE_ATTR_FFA     0x00464641
+#define ZE_ATTR_CUSTOM  0x43757374
+
 typedef struct {
     ZE_STREAM *stream;
     char **filenames;

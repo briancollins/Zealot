@@ -1,0 +1,3 @@
+@interface SRPopUpButtonCell : NSPopUpButtonCell
+
+@end

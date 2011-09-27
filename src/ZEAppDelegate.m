@@ -6,6 +6,10 @@
 
 @synthesize window;
 
++ (NSManagedObjectContext *)managedObjectContext {
+    return [(ZEAppDelegate *)[[NSApplication sharedApplication] delegate] managedObjectContext];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     [[ZEReplayManager sharedManager] startMonitoring];
 }

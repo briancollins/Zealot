@@ -30,6 +30,7 @@ void directoryChanged(ConstFSEventStreamRef streamRef,
     return sharedManager;
 }
 
+
 - (void)addFileWithPath:(NSString *)path {
     // TODO find hash of replay and do nothing if already processed
     NSString *account = nil;
@@ -44,7 +45,9 @@ void directoryChanged(ConstFSEventStreamRef streamRef,
 }
 
 - (void)parseReplay:(NSString *)replay account:(NSString *)account {
-    [[[ZEReplay alloc] initWithPath:replay account:account] autorelease];
+    if ([replay hasSuffix:@".SC2Replay"]) {
+        [[[ZEReplay alloc] initWithPath:replay account:account] autorelease];
+    }
 }
 
 - (void)parseAllReplayFiles {

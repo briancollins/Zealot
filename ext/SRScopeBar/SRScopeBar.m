@@ -12,6 +12,7 @@
 #import "SRScopeBar.h"
 #import "SRScopeBarGroup.h"
 #import "SRButtonCell.h"
+#import "SRPopupButtonCell.h"
 
 #pragma mark -
 #pragma mark Constants
@@ -722,7 +723,7 @@ NSString * const SRGroupIdentifierKey = @"SRGroupIdentifierKey";
     [self setButtonCell:buttonCell];
     [buttonCell autorelease];
     
-    NSPopUpButtonCell *popUpCell = [[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO];
+    NSPopUpButtonCell *popUpCell = [[SRPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO];
     [popUpCell setBezelStyle:NSRecessedBezelStyle];
     [popUpCell setButtonType:NSPushOnPushOffButton];
     [popUpCell setArrowPosition:NSPopUpArrowAtBottom];

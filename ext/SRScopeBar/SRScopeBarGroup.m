@@ -66,7 +66,7 @@
     [self setIdentifier:[coder decodeObjectForKey:@"SRScopeBarGroup identifier"]];
     [self setLabel:[coder decodeObjectForKey:@"SRScopeBarGroup label"]];
     [self setAttributedLabel:[coder decodeObjectForKey:@"SRScopeBarGroup attributedLabel"]];
-    [self setGroupSelectionStyle:[coder decodeIntegerForKey:@"SRScopeBarGroup groupSelectionStyle"]];
+    [self setGroupSelectionStyle:[coder decodeIntForKey:@"SRScopeBarGroup groupSelectionStyle"]];
     [self setShowsSeparator:[coder decodeBoolForKey:@"SRScopeBarGroup showsSeparator"]];
     [self setShowsLabel:[coder decodeBoolForKey:@"SRScopeBarGroup showsLabel"]];
     [self setScopeBar:[coder decodeObjectForKey:@"SRScopeBarGroup scopeBar"]];
@@ -84,7 +84,7 @@
     [coder encodeObject:[self identifier] forKey:@"SRScopeBarGroup identifier"];
     [coder encodeObject:[self label] forKey:@"SRScopeBarGroup label"];
     [coder encodeObject:attributedLabel_ forKey:@"SRScopeBarGroup attributedLabel"];
-    [coder encodeInteger:[self groupSelectionStyle] forKey:@"SRScopeBarGroup groupSelectionStyle"];
+    [coder encodeInt:[self groupSelectionStyle] forKey:@"SRScopeBarGroup groupSelectionStyle"];
     [coder encodeBool:[self showsSeparator] forKey:@"SRScopeBarGroup showsSeparator"];
     [coder encodeBool:[self showsLabel] forKey:@"SRScopeBarGroup showsLabel"];
     [coder encodeObject:[self selectionIndexes] forKey:@"SRScopeBarGroup selectionIndexes"];
@@ -224,7 +224,7 @@
 }
 
 -(id)objectAtIndex:(NSUInteger)objectIndex {
-    if (objectIndex < 0 || objectIndex >= [self numberOfObjects]) {
+    if (objectIndex >= [self numberOfObjects]) {
         NSException *rangeException = [NSException exceptionWithName:NSRangeException reason:@"SRScopeBarGroup:objectAtIndex: objectIndex invalid" userInfo:nil];
         @throw rangeException;
     }
@@ -302,7 +302,7 @@
 }
 
 -(void)didClickObject_:(NSUInteger)objectIndex alwaysSetToOnState:(BOOL)alwaysOn {
-    if (objectIndex < 0 || objectIndex >= [self numberOfObjects]) {
+    if (objectIndex >= [self numberOfObjects]) {
         NSException *rangeException = [NSException exceptionWithName:NSRangeException reason:@"SRScopeBarGroup:didClickObject_:alwaysSetToOnState: objectIndex invalid" userInfo:nil];
         @throw rangeException;
     }    

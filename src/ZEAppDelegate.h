@@ -12,5 +12,7 @@
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 
 - (IBAction)saveAction:(id)sender;
++ (NSManagedObjectContext *)managedObjectContext;
 
 @end
+

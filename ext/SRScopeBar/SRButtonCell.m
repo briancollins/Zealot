@@ -22,16 +22,16 @@
 - (NSRect)drawTitle:(NSAttributedString*)title withFrame:(NSRect)frame inView:(NSView*)controlView {
 	if (self.selected || self.mouseOver) {
         NSShadow *shadow = [[[NSShadow alloc] init] autorelease];
-        shadow.shadowColor = [NSColor darkGrayColor];
+        shadow.shadowColor = [NSColor colorWithDeviceWhite:0.2 alpha:1.0f];
 
-        shadow.shadowOffset = self.selected ? CGSizeMake(0, 1) : CGSizeMake(0, -1);
+        shadow.shadowOffset = CGSizeMake(0, -0.5);
         NSAttributedString *attributedTitle = [[[NSAttributedString alloc] 
                                                 initWithString:[title string]
                                                 attributes:
                                                 [NSDictionary dictionaryWithObjectsAndKeys:
                                                  shadow,
                                                  NSShadowAttributeName,
-                                                 [NSColor darkGrayColor],
+                                                 [NSColor whiteColor],
                                                  NSForegroundColorAttributeName,
                                                  [NSFont boldSystemFontOfSize:11],
                                                  NSFontAttributeName,
@@ -49,7 +49,7 @@
                                       [NSDictionary dictionaryWithObjectsAndKeys:
                                        shadow,
                                        NSShadowAttributeName,
-                                       [NSColor darkGrayColor],
+                                       [NSColor colorWithDeviceWhite:0.25 alpha:1.0f],
                                        NSForegroundColorAttributeName,
                                        [NSFont boldSystemFontOfSize:11],
                                        NSFontAttributeName,

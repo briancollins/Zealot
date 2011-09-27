@@ -57,9 +57,30 @@ typedef struct {
     uint32_t header;
     uint32_t attribute_id;
     uint8_t player;
-    uint8_t str[4];
+    uint32_t value;
 } ZE_MPQ_ATTRIBUTE;
+
 #pragma pack(pop)
+
+#define ZE_ATTR_PLAYER_TYPE     0x01F4
+#define ZE_ATTR_GAME_TYPE       0x07D1
+#define ZE_ATTR_GAME_SPEED      0x0BB8
+#define ZE_ATTR_PLAYER_RACE     0x0BB9
+#define ZE_ATTR_PLAYER_COLOR    0x0BBA
+#define ZE_ATTR_PLAYER_HANDICAP 0x0BBB
+#define ZE_ATTR_AI_DIFFICULTY   0x0BBC
+#define ZE_ATTR_CATEGORY        0x0BC1
+#define ZE_ATTR_TEAMS_1V1       0x07D2
+#define ZE_ATTR_TEAMS_2V2       0x07D3
+#define ZE_ATTR_TEAMS_3V3       0x07D4
+#define ZE_ATTR_TEAMS_4V4       0x07D5
+#define ZE_ATTR_TEAMS_FFA       0x07D6
+#define ZE_ATTR_TEAMS_6V6       0x07D8
+
+#define ZE_ATTR_TERRAN  0x54657272
+#define ZE_ATTR_ZERG    0x5A657267
+#define ZE_ATTR_PROTOSS 0x50726F74
+#define ZE_ATTR_RANDOM  0x52414E44
 
 typedef struct {
     ZE_STREAM *stream;
@@ -99,7 +120,7 @@ ZE_RETVAL ze_mpq_read_tables(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_file(ZE_MPQ *mpq, char *filename, ZE_STREAM **s);
 ZE_RETVAL ze_mpq_read_headers(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_initdata(ZE_MPQ *mpq, CFStringRef *region, CFStringRef *account_id);
-ZE_RETVAL ze_mpq_read_attributes(ZE_MPQ *mpq, CFArrayRef *attributes);
+ZE_RETVAL ze_mpq_read_attributes(ZE_MPQ *mpq, ZE_MPQ_ATTRIBUTE **attributes, uint32_t *n);
 
 void ze_mpq_close(ZE_MPQ *mpq);
 

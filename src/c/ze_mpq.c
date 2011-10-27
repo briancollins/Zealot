@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <bzlib.h>
+#include <CommonCrypto/CommonDigest.h>
 #include "ze_mpq.h"
 #include "ze_encryption_table.h"
 
@@ -27,6 +28,29 @@ ZE_RETVAL ze_mpq_new(ZE_MPQ **mpq, ZE_STREAM *stream) {
 error:
     free(m);
     return ret;
+}
+
+ZE_RETVAL ze_mpq_compute_hash(ZE_MPQ *mpq, CFStringRef *hash) {
+    uint8_t digest[CC_SHA1_DIGEST_LENGTH] = {0};
+    // This one function does an unkeyed SHA1 hash of your hash data
+    CC_SHA1(mpq->stream->bytes, (CC_LONG)mpq->stream->len, digest);
+
+    uint8_t result[(CC_SHA1_DIGEST_LENGTH * 2) + 1] = {'\0'};
+    uint8_t *p = result;
+    for (int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++) {
+        uint8_t nibble = digest[i] >> 4;
+        *p++ = nibble > 0x09 ? 'a' + nibble - 0x0a : '0' + nibble;
+        nibble = digest[i] & 0x0F;
+        *p++ = nibble > 0x09 ? 'a' + nibble - 0x0a : '0' + nibble;
+    }
+    
+    *hash = CFStringCreateWithBytes(NULL, (UInt8 *)result, (CC_SHA1_DIGEST_LENGTH * 2), kCFStringEncodingASCII, false);
+    
+    if (*hash == NULL) {
+        return ZE_ERROR_CREATE;
+    }
+    
+    return ZE_SUCCESS;
 }
 
 ZE_RETVAL ze_mpq_read_headers(ZE_MPQ *mpq) {
@@ -208,6 +232,7 @@ ZE_RETVAL ze_mpq_build(ZE_MPQ *mpq, uint64_t *build) {
     i = 4;
     n = CFNumberCreate(NULL, kCFNumberIntType, &i);
     CFNumberRef result = CFDictionaryGetValue(d, n);
+    CFRelease(n);
     if (result == NULL || CFGetTypeID(result) != CFNumberGetTypeID()) {
         ret = ZE_ERROR_FORMAT;
         goto error;

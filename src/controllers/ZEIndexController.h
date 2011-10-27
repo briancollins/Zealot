@@ -7,5 +7,8 @@
 @property (nonatomic, retain) SRScopeBarGroup *matchupGroup;
 @property (nonatomic, retain) NSArray *types;
 @property (nonatomic, retain) NSArray *matchups;
+@property (nonatomic, retain) IBOutlet NSArrayController *arrayController;
+@property (nonatomic, retain) IBOutlet NSTableRowView *tableRow;
+
 
 @end

@@ -7,6 +7,8 @@
 @property (nonatomic, copy) NSString *type;
 @property (nonatomic, copy) NSString *category;
 @property (nonatomic, copy) NSString *region;
+@property (nonatomic, copy) NSString *fileHash;
+@property (nonatomic, copy) NSString *originalPath;
 @property (nonatomic, retain) NSNumber *duration;
 @property (nonatomic, retain) ZEMap *map;
 

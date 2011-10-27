@@ -13,6 +13,8 @@
     <entity name="ZEReplay" representedClassName="ZEReplay">
         <attribute name="category" attributeType="String" indexed="YES"/>
         <attribute name="duration" optional="YES" attributeType="Integer 64" defaultValueString="0"/>
+        <attribute name="fileHash" attributeType="String" indexed="YES"/>
+        <attribute name="originalPath" attributeType="String"/>
         <attribute name="region" attributeType="String"/>
         <attribute name="type" attributeType="String" indexed="YES"/>
         <relationship name="map" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ZEMap" inverseName="replays" inverseEntity="ZEMap"/>
@@ -27,9 +29,9 @@
         <relationship name="replay" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ZEReplay" inverseName="replayPlayers" inverseEntity="ZEReplay"/>
     </entity>
     <elements>
-        <element name="ZEReplay" positionX="232" positionY="174" width="128" height="135"/>
-        <element name="ZEPlayer" positionX="574" positionY="324" width="128" height="105"/>
-        <element name="ZEReplayPlayer" positionX="412" positionY="309" width="128" height="135"/>
         <element name="ZEMap" positionX="421" positionY="207" width="128" height="75"/>
+        <element name="ZEPlayer" positionX="574" positionY="324" width="128" height="105"/>
+        <element name="ZEReplay" positionX="232" positionY="174" width="128" height="165"/>
+        <element name="ZEReplayPlayer" positionX="412" positionY="309" width="128" height="135"/>
     </elements>
 </model>

@@ -8,10 +8,11 @@
 @interface ZEReplay ()
 - (ZEPlayer *)findPlayerWithId:(NSString *)bnetId inRegion:(NSString *)region;
 - (ZEMap *)findMap:(NSString *)name;
+- (ZEReplay *)findReplay:(NSString *)fileHash;
 @end
 
 @implementation ZEReplay
-@dynamic replayPlayers, type, category, region, duration, map;
+@dynamic replayPlayers, type, category, region, duration, map, fileHash, originalPath;
 
 - (void)willTurnIntoFault {
     self.replayPlayers = nil;
@@ -20,6 +21,8 @@
     self.duration = nil;
     self.map = nil;
     self.region = nil;
+    self.fileHash = nil;
+    self.originalPath = nil;
     [super willTurnIntoFault];
 }
 
@@ -29,18 +32,27 @@
     CFStringRef account_id = NULL;
     CFStringRef region = NULL;
     CFDictionaryRef dict = NULL;
+    CFStringRef hash = NULL;
     ZE_MPQ_ATTRIBUTE *attributes = NULL;
     uint32_t attributes_count = 0;
     
-    if ((self = [super init])) {
+    if ((self = [super init])) {        
+        self.originalPath = path;
 
         ret = ze_mpq_new_file(&mpq, (char *)[path UTF8String]);
         if (ret != ZE_SUCCESS) goto error;
         
-        ret = ze_mpq_read_headers(mpq);
+        ret = ze_mpq_compute_hash(mpq, &hash);
         if (ret != ZE_SUCCESS) goto error;
         
+        if ([self findReplay:(NSString *)hash] != nil) {
+            goto error;
+        }
         
+        self.fileHash = (NSString *)hash;
+        
+        ret = ze_mpq_read_headers(mpq);
+        if (ret != ZE_SUCCESS) goto error;
 
         ret = ze_mpq_read_initdata(mpq, &region, &account_id);
         if (ret != ZE_SUCCESS) goto error;
@@ -118,6 +130,7 @@
             NSNumber *outcome = [player objectForKey:[NSNumber numberWithInt:8]];
             
             NSString *race = NULL;
+            NSNumber *team = [NSNumber numberWithInt:1];
             
             for (j = 0; j < attributes_count; j++) {
                 ZE_MPQ_ATTRIBUTE *a = &attributes[j];
@@ -139,6 +152,36 @@
                                     break;
                             }
                             break;
+                        case ZE_ATTR_TEAMS_1V1:
+                            if ([self.type isEqualToString:@"1v1"]) {
+                                
+                                team = [NSNumber numberWithInt:((char *)&a->value)[0] - '0'];
+                            }
+                            break;
+                        case ZE_ATTR_TEAMS_2V2:
+                            if ([self.type isEqualToString:@"2v2"]) {
+                                
+                                team = [NSNumber numberWithInt:((char *)&a->value)[0] - '0'];
+                            }
+                            break;  
+                        case ZE_ATTR_TEAMS_3V3:
+                            if ([self.type isEqualToString:@"3v3"]) {
+                                
+                                team = [NSNumber numberWithInt:((char *)&a->value)[0] - '0'];
+                            }
+                            break;          
+                        case ZE_ATTR_TEAMS_4V4:
+                            if ([self.type isEqualToString:@"4v4"]) {
+                                
+                                team = [NSNumber numberWithInt:((char *)&a->value)[0] - '0'];
+                            }
+                            break;    
+                        case ZE_ATTR_TEAMS_6V6:
+                            if ([self.type isEqualToString:@"6v6"]) {
+                                
+                                team = [NSNumber numberWithInt:((char *)&a->value)[0] - '0'];
+                            }
+                            break;  
                     }
                 }
             }
@@ -148,7 +191,7 @@
             rp.outcome = [outcome stringValue];
             rp.race = race;
             rp.won = [NSNumber numberWithBool:[outcome isEqualToNumber:[NSNumber numberWithInt:2]]];
-            rp.team = [NSNumber numberWithInt:1]; // TODO
+            rp.team = team; // TODO
             
             ZEPlayer *p;
             p = [self findPlayerWithId:[bnetId stringValue] inRegion:(NSString *)region];
@@ -165,6 +208,7 @@
         
         CFRelease(dict);
         CFRelease(region);
+        CFRelease(hash);
         CFRelease(account_id);
         free(attributes), attributes = NULL;
         ze_stream_close(s);
@@ -174,8 +218,11 @@
     return self;
     
 error:
-    NSLog(@"%d", ret);
+    [self.managedObjectContext deleteObject:self];
+
     free(attributes), attributes = NULL;
+    
+    if (hash != NULL) CFRelease(hash), hash = NULL;
     if (attributes != NULL) CFRelease(attributes), attributes = NULL;
     if (dict != NULL) CFRelease(dict), dict = NULL;
     if (account_id != NULL) CFRelease(account_id), account_id = NULL;
@@ -222,6 +269,27 @@ error:
     NSArray *array = [moc executeFetchRequest:request error:&error];
     if (array == nil || array.count == 0) {
         return [[[ZEMap alloc] init] autorelease];
+    } else {
+        return [array objectAtIndex:0];
+    }
+}
+
+- (ZEReplay *)findReplay:(NSString *)fileHash {
+    NSManagedObjectContext *moc = [ZEAppDelegate managedObjectContext];
+    NSEntityDescription *entityDescription = [NSEntityDescription
+                                              entityForName:@"ZEReplay" inManagedObjectContext:moc];
+    NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
+    [request setEntity:entityDescription];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:
+                              @"fileHash = %@", fileHash];
+    [request setPredicate:predicate];
+    [request setFetchLimit:1];
+    
+    NSError *error = nil;
+    NSArray *array = [moc executeFetchRequest:request error:&error];
+    if (array == nil || array.count == 0) {
+        return nil;
     } else {
         return [array objectAtIndex:0];
     }

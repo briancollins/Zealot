@@ -47,7 +47,7 @@ void directoryChanged(ConstFSEventStreamRef streamRef,
 
 - (void)parseReplay:(NSString *)replay account:(NSString *)account {
     if ([replay hasSuffix:@".SC2Replay"]) {
-        ZEReplay *r = [[[ZEReplay alloc] initWithPath:replay account:account] autorelease];
+        [[[ZEReplay alloc] initWithPath:replay account:account] autorelease];
     }
 }
 

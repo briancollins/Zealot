@@ -134,6 +134,8 @@ ZE_RETVAL ze_mpq_read_headers(ZE_MPQ *mpq);
 ZE_RETVAL ze_mpq_read_initdata(ZE_MPQ *mpq, CFStringRef *region, CFStringRef *account_id);
 ZE_RETVAL ze_mpq_read_attributes(ZE_MPQ *mpq, ZE_MPQ_ATTRIBUTE **attributes, uint32_t *n);
 
+ZE_RETVAL ze_mpq_compute_hash(ZE_MPQ *mpq, CFStringRef *hash);
+
 void ze_mpq_close(ZE_MPQ *mpq);
 
 #endif

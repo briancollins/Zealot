@@ -25,6 +25,7 @@
 		3B9B43E114310A0E00011A43 /* ZEModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B9B43E014310A0E00011A43 /* ZEModel.m */; };
 		3B9B43E514310A5700011A43 /* ZEPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B9B43E414310A5700011A43 /* ZEPlayer.m */; };
 		3B9B43E814310BE000011A43 /* ZEReplayPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B9B43E714310BE000011A43 /* ZEReplayPlayer.m */; };
+		3BA0793314331DB6000704D6 /* ZEReplayRowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA0793214331DB6000704D6 /* ZEReplayRowView.m */; };
 		3BB546521431BC580074BC18 /* ZEMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BB546511431BC580074BC18 /* ZEMap.m */; };
 		3BB546561431BDDC0074BC18 /* SRPopupButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BB546551431BDDC0074BC18 /* SRPopupButtonCell.m */; };
 		3BB889C4142F84800049A29F /* fixtures in Resources */ = {isa = PBXBuildFile; fileRef = 3BB889C3142F84800049A29F /* fixtures */; };
@@ -82,6 +83,8 @@
 		3B9B43E414310A5700011A43 /* ZEPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZEPlayer.m; sourceTree = "<group>"; };
 		3B9B43E614310BE000011A43 /* ZEReplayPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZEReplayPlayer.h; sourceTree = "<group>"; };
 		3B9B43E714310BE000011A43 /* ZEReplayPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZEReplayPlayer.m; sourceTree = "<group>"; };
+		3BA0793114331DB6000704D6 /* ZEReplayRowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZEReplayRowView.h; sourceTree = "<group>"; };
+		3BA0793214331DB6000704D6 /* ZEReplayRowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZEReplayRowView.m; sourceTree = "<group>"; };
 		3BB546501431BC580074BC18 /* ZEMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZEMap.h; sourceTree = "<group>"; };
 		3BB546511431BC580074BC18 /* ZEMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZEMap.m; sourceTree = "<group>"; };
 		3BB546541431BDDC0074BC18 /* SRPopupButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRPopupButtonCell.h; sourceTree = "<group>"; };
@@ -221,6 +224,15 @@
 			path = c;
 			sourceTree = "<group>";
 		};
+		3BA0793014331DAB000704D6 /* views */ = {
+			isa = PBXGroup;
+			children = (
+				3BA0793114331DB6000704D6 /* ZEReplayRowView.h */,
+				3BA0793214331DB6000704D6 /* ZEReplayRowView.m */,
+			);
+			path = views;
+			sourceTree = "<group>";
+		};
 		3BFCF302142803780048215F = {
 			isa = PBXGroup;
 			children = (
@@ -293,6 +305,7 @@
 		3BFCF337142804160048215F /* src */ = {
 			isa = PBXGroup;
 			children = (
+				3BA0793014331DAB000704D6 /* views */,
 				3B8436CE142A8BA800B22E7B /* c */,
 				3B2793E11430814C00AABDEF /* controllers */,
 				3B8436C7142A8B0D00B22E7B /* models */,
@@ -366,6 +379,9 @@
 /* Begin PBXProject section */
 		3BFCF304142803780048215F /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = 3BFCF307142803780048215F /* Build configuration list for PBXProject "Zealot" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -451,6 +467,7 @@
 				3B9B43E814310BE000011A43 /* ZEReplayPlayer.m in Sources */,
 				3BB546521431BC580074BC18 /* ZEMap.m in Sources */,
 				3BB546561431BDDC0074BC18 /* SRPopupButtonCell.m in Sources */,
+				3BA0793314331DB6000704D6 /* ZEReplayRowView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
